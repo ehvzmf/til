@@ -35,3 +35,9 @@ src/
 <br />
 
 => **전역 설정**(환경 변수, 앱 초기화에 필요한 설정)과 **전역 리소스**(특정 초기화 과정 없이 어디서나 재사용 가능) 구분!
+
+<br />
+
+### 그러나 아직 헷갈리는 이유
+https://github.com/feature-sliced/examples/tree/master/todo-app/src/app/styles
+공식에서 제공한 예시는 또 다르다...
