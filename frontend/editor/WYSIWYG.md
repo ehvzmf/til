@@ -1,8 +1,8 @@
 > 2025-04-08
 
 # 📌 Focus
-> WYSIWYG
-> what you see is what you get
+### WYSIWYG
+: what you see is what you get
 
 <br />
 
