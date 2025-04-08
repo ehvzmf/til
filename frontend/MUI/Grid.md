@@ -1,7 +1,7 @@
 > 📅 Date: 2025-04-07
 
 # 📌 Focus
-- Material UI: Grid
+Material UI: Grid
 <br />
 
 # 📝 Learnings
@@ -27,7 +27,13 @@ import { Grid } from '@mui/material';
   </Grid>
 </Grid>
 ```
+- `import`도 그냥 Grid (기존 그리드는 `@/mui/material/GridLegacy`)
+- `item`, `zeroMinWidth` 삭제
+- xs, sm, md ... 직접 지정하지 않고 size props 안에 적용
+- `<Grid size="grow">`로 변경 (true 대신)
+- negative margin 삭제, overflow 방지
+- Nested depth 제한 없음
 <br />
 
 # 🔗 References
-- [MUI Grid](https://mui.com/material-ui/react-grid/)
+[MUI Grid](https://mui.com/material-ui/react-grid/)
