@@ -20,7 +20,7 @@ To customize Bar, Line, Doughnut, Radar charts
 
 ---
 
-[react-chartjs-2 | react-chartjs-2](https://react-chartjs-2.js.org/)
+[react-chartjs-2](https://react-chartjs-2.js.org/)
 
 - `Chart.js`를 React에서 쉽게 사용할 수 있도록 래핑한 라이브러리
 - React 컴포넌트 형태로 모든 기능 지원
