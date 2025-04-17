@@ -1,7 +1,7 @@
 > 📅 Date: 2025-04-17
 
 # 📌 Focus
-- API 호출 구조 설계 (axios + tanstack query) with FSD
+- API 호출 구조 설계 (axios) with FSD
 - 현재 프로젝트에서 api 사용하는 방식 아카이브
 
 <br />
