@@ -235,8 +235,3 @@ export const useAuthContext = () => useContext(AuthContext);
 - [Firebase Auth 공식 문서](https://firebase.google.com/docs/auth)
 - [Google 로그인 가이드](https://firebase.google.com/docs/auth/web/google-signin)
 - [Admin SDK for Token Verification](https://firebase.google.com/docs/auth/admin/verify-id-tokens)
-
----
-
-파일명으로는 `firebase-auth-guide.md`, 폴더는 `frontend/auth/`를 추천드립니다.  
-이 내용은 한 번 잘 정리해두면 팀 onboarding 자료로도 쓸 수 있어요! 😊
