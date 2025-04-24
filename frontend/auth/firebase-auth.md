@@ -21,38 +21,6 @@
 
 ---
 
-## 🚀 시작하기
-
-### 🔧 1. Firebase 프로젝트 설정
-- [Firebase 콘솔](https://console.firebase.google.com/)에서 프로젝트 생성
-- 인증 → 로그인 방법 → 사용할 로그인 방식 활성화 (예: 이메일/비밀번호)
-
-### 💻 2. 웹 프로젝트에 Firebase 설치
-
-```bash
-npm install firebase
-```
-
-### 🔥 3. Firebase 초기화
-
-```ts
-// firebase.ts
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: '...',
-  authDomain: '...',
-  projectId: '...',
-  appId: '...',
-};
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-```
-
----
-
 ## 👤 기본 로그인 흐름 (이메일/비밀번호)
 
 ### ✍️ 회원가입
@@ -124,24 +92,6 @@ axios.get('/api/protected', {
 ```
 
 > 이 방식으로 백엔드에서 Firebase 인증된 유저의 토큰을 검증할 수 있음 (Firebase Admin SDK 필요)
-
----
-
-## 🎨 소셜 로그인 (Google 예시)
-
-```ts
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-
-const provider = new GoogleAuthProvider();
-
-signInWithPopup(auth, provider)
-  .then((result) => {
-    console.log('Google 로그인 성공:', result.user);
-  })
-  .catch((error) => {
-    console.error('로그인 실패:', error);
-  });
-```
 
 ---
 
