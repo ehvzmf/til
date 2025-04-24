@@ -192,7 +192,8 @@ console.log(scopeRes);
     const { year, month, day } = birthday;
     console.log(`사용자 생일: ${year}-${month}-${day}`);
   }
-  ``` 
+  ```
+<br />
 
 # 🔗 References
 - [People API 문서](https://developers.google.com/people)
