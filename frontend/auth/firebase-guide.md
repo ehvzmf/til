@@ -1,4 +1,4 @@
-> 📆 Date: 2025-04-23
+> 📆 Date: 2025-04-24
 
 # 📌 Focus
 Firebase Authentication 프로젝트 도입하기
@@ -13,10 +13,14 @@ Firebase Authentication 프로젝트 도입하기
 3. 로그인 제공업체 > Google 선택
 4. 프로젝트 공개용 이름, 지원 이메일 (일단 내꺼) 설정
 
+<br />
+
 ## 2️⃣ Install Firebase in Web project
 ```bash
 pnpm add firebase
 ```
+
+<br />
 
 ## 3️⃣ Initialize Firebase
 src/shared/firebase.ts
@@ -39,6 +43,8 @@ export const auth = getAuth(app);
 ```
 - 변수는 `.env`에서 관리
 - 내 앱 추가 > 그대로 복붙하면 됨
+
+<br />
 
 ## 4️⃣ Google 로그인 연결
 ### GoogleAuthProvider 추가
@@ -77,195 +83,118 @@ const handleGoogleLogin = async () => {
 };
 ```
 
-
-
-
-
-
-
----
-
-## 👤 기본 로그인 흐름 (이메일/비밀번호)
-
-### ✍️ 회원가입
-
-```ts
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebase';
-
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    console.log('회원가입 성공:', userCredential.user);
-  })
-  .catch((error) => {
-    console.error('회원가입 실패:', error);
-  });
+### header에서 로그인 버튼 분기 처리
+```tsx
+  const token = localStorage.getItem('token');
+  const isLoggedIn = !!token;
 ```
 
-### 🔑 로그인
-
+### axiosInstance에서 요청 시 토큰 자동 포함
 ```ts
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    console.log('로그인 성공:', userCredential.user);
-  })
-  .catch((error) => {
-    console.error('로그인 실패:', error);
-  });
-```
-
-### 🔒 로그아웃
-
-```ts
-import { signOut } from 'firebase/auth';
-
-signOut(auth);
-```
-
----
-
-## 🪪 로그인 상태 유지 & 사용자 추적
-
-```ts
-import { onAuthStateChanged } from 'firebase/auth';
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log('로그인 상태 유지됨', user);
-  } else {
-    console.log('로그아웃 상태');
-  }
-});
-```
-
----
-
-## 📡 사용자 인증 토큰 → 백엔드 연동
-
-```ts
-const user = auth.currentUser;
-const token = await user?.getIdToken();
-
-axios.get('/api/protected', {
-  headers: {
-    Authorization: `Bearer ${token}`,
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
-});
+  (error) => Promise.reject(error)
+);
 ```
 
-> 이 방식으로 백엔드에서 Firebase 인증된 유저의 토큰을 검증할 수 있음 (Firebase Admin SDK 필요)
+### 로그인/회원가입 리다이렉션
+소셜 로그인 화면을 팝업 또는 리다이렉션 화면으로 구현 후, 적절히 (홈 화면 등) 이동
 
----
 
-## 🎨 소셜 로그인 (Google 예시)
+<br />
+<br />
 
+## 🔥 추가 정보 가져오는 법 (구글 로그인)
+> 사용자 동의를 받아 민감한 정보를 추가로 받아오기
+> people api 사용
+> 여기서는 생일, 성별 필요
+
+### Google Cloud Console 설정
+- 내 프로젝트 > API 및 서비스 > OAuth 동의 화면
+  - 앱 유형: 외부
+  - 앱 이름, 지원 이메일 등 기본 정보 작성 
+- 데이터 액세스 > 범위 추가 또는 삭제
+  - `user.birthday.read`, `user.gender.read`, `profile.agerange.read` 등 추가
+  - 검색해도 없으면 수동 입력
+    `https://www.googleapis.com/auth/user.birthday.read`
+    `https://www.googleapis.com/auth/user.gender.read`
+- 게시 상태가 프로덕션일 경우, 구글에 앱 검토 요청 필수
+- 게시 상태를 테스트로 전환 후 테스트 사용자 추가
+- People api 사용 설정 [enable](https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=379942709907)
+
+<br />
+
+### 코드 추가 
+firebase.ts에 scope 추가
 ```ts
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-
-const provider = new GoogleAuthProvider();
-
-signInWithPopup(auth, provider)
-  .then((result) => {
-    console.log('Google 로그인 성공:', result.user);
-  })
-  .catch((error) => {
-    console.error('로그인 실패:', error);
-  });
+googleProvider.addScope('https://www.googleapis.com/auth/user.birthday.read');
+googleProvider.addScope('https://www.googleapis.com/auth/user.gender.read');
+googleProvider.addScope('https://www.googleapis.com/auth/profile.agerange.read');
 ```
 
----
-
-## 🏢 실무에서의 적용 전략
-
-### 📁 1. 파일 구조 예시
-
-```
-src/
-├── auth/
-│   ├── firebase.ts              # 초기화 및 인스턴스
-│   ├── useAuth.ts               # 사용자 상태 추적 훅
-│   └── authProvider.tsx         # 전역 context 관리
-```
-
----
-
-### 🪝 2. 사용자 상태 관리 훅
-
+발급받은 access token으로 people api에 정보 요청
 ```ts
-// useAuth.ts
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
+const accessToken = GoogleAuthProvider.credentialFromResult(result)?.accessToken;
 
-export const useAuth = () => {
-  const [user, setUser] = useState<null | User>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  return { user, loading };
-};
+const scopeRes = await axios.get('https://people.googleapis.com/v1/people/me?personFields=birthdays,genders',
+  {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  }
+);
+console.log(scopeRes);
 ```
 
----
+<br />
 
-### 🌍 3. Context로 전역 사용자 정보 제공
-
-```tsx
-// authProvider.tsx
-import { createContext, useContext } from 'react';
-import { useAuth } from './useAuth';
-
-const AuthContext = createContext(null);
-
-export const AuthProvider = ({ children }) => {
-  const auth = useAuth();
-
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
-};
-
-export const useAuthContext = () => useContext(AuthContext);
+### Response
 ```
-
-```tsx
-// _app.tsx
-<AuthProvider>
-  <App />
-</AuthProvider>
+{
+  "resourceName": "people/...",
+  "etag": "...",
+  "genders": [
+    {
+      "metadata": {},
+      "value": "female | male",
+      "formattedValue": "female | male",
+    },
+  ],
+  "birthdays": [
+    {
+      "metadata": {},
+      "date": {
+        "year": 2000,
+        "month": 7,
+        "day": 8,
+    },
+  ]
 ```
-
----
-
-### 📌 4. 실무 고려 포인트
-
-| 항목 | 설명 |
-|------|------|
-| 토큰 갱신 | Firebase는 자동 갱신됨. 필요시 `onIdTokenChanged`로 추적 |
-| 토큰 만료 시 재로그인 | 프론트에서 에러 코드 보고 처리 |
-| role-based auth | Custom Claims + Firebase Admin SDK 활용 |
-| 백엔드 검증 | Firebase Admin SDK로 `verifyIdToken(token)` |
-| 상태 동기화 | React Query, Zustand 등과 연계 가능 |
-
----
-
-## ✅ 결론
-
-- Firebase 인증은 빠르게 구축 가능하면서도 확장성 있음
-- 실무에서는 사용자 상태 전역 관리, 백엔드 연동, 토큰 처리 방식 설계가 중요
-- Context + custom hook 조합이 매우 유용함
-
----
+- ⚠️ 기록되지 않은 필드는 아예 생략된 채 온다.
+  - resourceName, etag만 전송될 수 있다.
+  - people api는 잘 사용하고 있다는 의미
+- 응답이 2개씩 오는 이유는 여러 도메인에서 중복 저장하기 때문이라고 한다.
+  - `primary === true`인 항목 사용: 가장 대표적인 정보
+  - `source.type === 'ACCOUNT'`인 항목 사용: 사용자가 직접 설정한 정보
+  - `birthdays[0]`만 사용: 간단한 처리, 위험 요소 존재
+  ```
+  const birthday = birthdays.find(
+    (b) => b.metadata?.primary || b.metadata?.source?.type === 'ACCOUNT'
+  )?.date;
+  
+  if (birthday) {
+    const { year, month, day } = birthday;
+    console.log(`사용자 생일: ${year}-${month}-${day}`);
+  }
+  ``` 
 
 # 🔗 References
-- [Firebase Auth 공식 문서](https://firebase.google.com/docs/auth)
-- [Google 로그인 가이드](https://firebase.google.com/docs/auth/web/google-signin)
-- [Admin SDK for Token Verification](https://firebase.google.com/docs/auth/admin/verify-id-tokens)
+- [People API 문서](https://developers.google.com/people)
+- [Firebase Authentication Docs](https://firebase.google.com/docs/auth/web/start)
+- [OAuth 민감 범위 및 검토 정책](https://support.google.com/cloud/answer/9110914)
