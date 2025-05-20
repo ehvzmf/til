@@ -62,7 +62,7 @@ function updateUser(id: number, data: UserForm) {
 
 <br />
 
-## ✅ 실무에서 자주 쓰이는 케이스
+## ✅ Examples 
 
 | 케이스 | 설명 |
 |--------|------|
