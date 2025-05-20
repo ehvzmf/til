@@ -7,7 +7,7 @@
 
 # 📝 Learnings
 
-## ✅ Omit이란?
+## ✅ Omit
 
 > **Omit<T, K>**는 타입 `T`에서 속성 `K`를 제거한 **새 타입을 만드는 유틸리티 타입**
 
@@ -94,8 +94,3 @@ function updateUser(id: number, data: UserForm) {
 
 - [TypeScript Docs – Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys)
 - [Type Challenges – Omit](https://github.com/type-challenges/type-challenges)
-
----
-
-이 내용을 바탕으로 `Pick`, `Partial`, `Exclude`, `Record` 등 다른 유틸리티 타입도 함께 이어서 정리해볼 수 있어요.  
-원하시면 다음으로 `Partial vs Omit` 비교도 정리해드릴게요! 😊
