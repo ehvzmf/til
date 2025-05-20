@@ -9,17 +9,16 @@
 
 # 📝 Learnings
 
-## ✅ MUI Menu는 어떻게 동작할까?
+## ✅ MUI Menu 
 
-MUI의 `Menu` 컴포넌트는 내부적으로
-\*\*열기 기준(anchor)\*\*과 **렌더링 스타일**을 모두 갖춘 **UI 구조 컴포넌트**입니다.
+내부적으로 \*\*열기 기준(anchor)\*\*과 **렌더링 스타일**을 갖춘 **UI 구조 컴포넌트**
 
 * 메뉴는 단독으로 존재하지 않음 → **어떤 DOM 요소를 기준으로 떠야 함**
 * 따라서 이 기준이 되는 DOM 요소가 필요 → 그것이 바로 **`anchorEl`**
 
 <br />
 
-## ✅ anchorEl: 메뉴를 어디에 띄울지를 결정하는 핵심
+## ✅ anchorEl: 메뉴를 어디에 띄울지를 결정하는 요소
 
 ```tsx
 const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -40,12 +39,12 @@ const handleClick = (e: React.MouseEvent<HTMLElement>) => {
 
 <br />
 
-## ✅ 왜 slotProps.paper가 필요한가?
+## ✅ slotProps.paper
 
 기본적인 `Menu` 스타일은 내부에서 **`Paper`** 컴포넌트를 사용해 렌더링됨
-→ 외부에서는 이 `Paper`에 직접 접근이 안 됨
+→ 외부에서는 이 `Paper`에 직접 접근 불가
 
-그래서 **MUI 5부터 도입된 `slotProps` 구조**를 활용함:
+**MUI 5부터는 `slotProps` 구조**를 도입하여 활용:
 
 ```tsx
 <Menu
