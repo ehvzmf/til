@@ -3,6 +3,7 @@
 ## 📌 Focus
 
 🎭 Playwright 
+
 <br />
 
 Microsoft에서 개발한 오픈소스 **E2E(End-to-End) 테스트 프레임워크**<br />
@@ -48,13 +49,15 @@ Microsoft에서 개발한 오픈소스 **E2E(End-to-End) 테스트 프레임워�
 
 <br />
 
----
+<br />
 
 ## 🛠️ 설치 및 프로젝트 초기화
 
 ### 1. Node.js 설치
 
 * Playwright는 Node.js 환경에서 동작
+
+<br />
 
 ### 2. Playwright 설치
 
@@ -68,6 +71,8 @@ npm init playwright@latest
   * 테스트 디렉토리 설정
   * GitHub Actions 워크플로우 설정 여부
   * 브라우저 설치 여부
+
+<br />
 
 ### 3. 프로젝트 구조
 
@@ -130,7 +135,7 @@ npx playwright test --ui
 
 * 테스트를 시각적으로 확인하고 디버깅할 수 있는 UI를 제공
 
----
+<br />
 
 ## 🧪 고급 기능
 
@@ -188,7 +193,7 @@ test('API 모킹 예제', async ({ page }) => {
 });
 ```
 
----
+<br />
 
 ## 📊 테스트 리포트
 
@@ -200,7 +205,7 @@ npx playwright show-report
 
 * 리포트에는 테스트 결과, 스크린샷, 비디오 등이 포함
 
----
+<br />
 
 ## 🔍 디버깅 팁
 
@@ -212,7 +217,7 @@ npx playwright test --debug
 
 * `page.pause()`를 코드에 삽입하여 특정 지점에서 실행을 일시 중지 가능 
 
----
+<br />
 
 ## 📚 추가 학습 자료
 
