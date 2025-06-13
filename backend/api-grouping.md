@@ -98,6 +98,8 @@ class PostAPI {
 
 ```
 
+<br />
+
 ### 2. Feature-based Grouping
 
 비즈니스 로직이나 사용자 기능을 중심으로 API를 그룹화하는 방식
@@ -160,6 +162,8 @@ const useSearch = () => {
 
 ```
 
+<br />
+
 ### 3. Version-based Grouping
 
 API의 하위 호환성을 유지하면서 새로운 기능을 추가할 때 사용하는 방식
@@ -205,8 +209,10 @@ const apiV3 = new APIClient('v3');
 // 점진적 마이그레이션
 const users = await apiV2.get<User[]>('/users');  // 안정적인 v2 사용
 const posts = await apiV3.get<Post[]>('/posts');  // 새로운 기능은 v3 사용
-
 ```
+
+<br />
+<br />
 
 ## 고급 그룹핑 전략
 
@@ -231,6 +237,8 @@ const posts = await apiV3.get<Post[]>('/posts');  // 새로운 기능은 v3 사�
 /api/payment/billing
 
 ```
+
+<br />
 
 ### 2. CQRS 패턴 기반 그룹핑
 
@@ -279,6 +287,9 @@ const useUserQueries = () => {
 
 ```
 
+<br /><br />
+
+
 ## 프론트엔드 개발자를 위한 고려사항
 
 ### 1. 프론트엔드 컴포넌트 구조와의 정렬
@@ -305,6 +316,8 @@ src/
 
 ```
 
+<br />
+
 ### 2. 상태 관리와의 연동
 
 Redux나 Zustand 같은 상태 관리 라이브러리의 구조와 API 그룹핑을 일치시키면 코드 일관성을 높일 수 있다.
@@ -329,6 +342,8 @@ class PostService {
 }
 
 ```
+
+<br />
 
 ### 3. TypeScript 타입 정의와의 일관성
 
@@ -359,6 +374,9 @@ namespace API {
 
 ```
 
+<br />
+<br />
+
 ## 실전 적용 팁
 
 ### 1. API 문서화 도구 활용
@@ -385,8 +403,9 @@ paths:
       responses:
         '200':
           description: Successful response
-
 ```
+
+<br />
 
 ### 2. API 클라이언트 코드 생성
 
@@ -398,8 +417,9 @@ npx @openapitools/openapi-generator-cli generate \
   -i api-spec.yaml \
   -g typescript-fetch \
   -o src/api/generated
-
 ```
+
+<br />
 
 ### 3. 모니터링 및 메트릭
 
@@ -433,7 +453,6 @@ const apiCall = async (endpoint: string, options?: RequestInit) => {
     throw error;
   }
 };
-
 ```
 
 <br />
