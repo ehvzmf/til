@@ -1,9 +1,14 @@
 > 📆 2025-07-15
 >
 
-```
-vite v6.3.5 building for production...
-✓ 2651 modules transformed.
+# ⚠️ ISSUE
+- cicd 환경에서 퍼블리싱 중 오류 발생
+- 빌드 중 rollup 에러가 발생한 것을 확인하고 디버깅
+
+<details>
+<summary>🚨 빌드 중 rollup 에러 발생</summary>
+
+```cmd
 ✗ Build failed in 5.48s
 error during build:
 Cannot add property 0, object is not extensible
@@ -19,3 +24,17 @@ Cannot add property 0, object is not extensible
     at Property.deoptimizePath (file:///C:/Users/user/Desktop/coup_frontend/node_modules/.pnpm/rollup@4.45.0/node_modules/rollup/dist/es/shared/node-entry.js:5667:36)
  ELIFECYCLE  Command failed with exit code 1.
 ```
+</details>
+
+<br />
+
+### 📌 구체적인 에러
+> Rollup 4.45.0에서 발생하는 내부 오류 <br />
+> 빌드 과정에서 객체가 확장 불가능한 상태에서 배열에 요소를 추가하려고 시도<br />
+> getLiteralValueAtPath 관련 오류로 코드 분석 중 발생
+> 
+- 로컬 환경에서는 문제되지 않았지만, 매번 의존성을 새로 설치하는 cicd 환경에서 문제가 발생하여
+
+
+# 🛠️ 해결해보자! 
+
