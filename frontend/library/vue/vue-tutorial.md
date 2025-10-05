@@ -43,7 +43,8 @@ export default {
 </script>
 ```
 
-### 성
+### 2. 컴포넌트 기반 아키텍처
+재사용 가능한 컴포넌트로 UI 구성
 
 ```vue
 <!-- ParentComponent.vue -->
@@ -75,7 +76,7 @@ export default {
 ```
 
 ### 3. 디렉티브 (Directives)
-HTML 템플릿에서 Vue의 기능을 활용할 수 있는 특별한 속성들입니다.
+> HTML 템플릿에서 Vue의 기능을 활용할 수 있는 특별한 속성
 
 ```vue
 <template>
@@ -104,7 +105,7 @@ HTML 템플릿에서 Vue의 기능을 활용할 수 있는 특별한 속성들�
 ## Vue 3의 주요 변화점
 
 ### 1. Composition API
-기존 Options API 외에 함수형 컴포넌트 작성 방식이 추가되었습니다.
+기존 Options API 외에 함수형 컴포넌트 작성 방식 추가
 
 ```vue
 <template>
@@ -146,7 +147,7 @@ export default {
 ```
 
 ### 2. Multiple Root Elements
-Vue 3에서는 컴포넌트가 여러 개의 루트 엘리먼트를 가질 수 있습니다.
+컴포넌트가 여러 개의 루트 엘리먼트를 가질 수 있다.
 
 ```vue
 <template>
@@ -157,7 +158,7 @@ Vue 3에서는 컴포넌트가 여러 개의 루트 엘리먼트를 가질 수 �
 ```
 
 ### 3. Teleport
-컴포넌트의 일부를 DOM의 다른 위치로 렌더링할 수 있습니다.
+컴포넌트의 일부를 DOM의 다른 위치로 렌더링
 
 ```vue
 <template>
@@ -177,7 +178,7 @@ Vue 3에서는 컴포넌트가 여러 개의 루트 엘리먼트를 가질 수 �
 ## Vue 생태계
 
 ### 1. Vue Router - 라우팅
-SPA에서 페이지 간 네비게이션을 처리합니다.
+SPA에서 페이지 간 네비게이션을 처리
 
 ```js
 import { createRouter, createWebHistory } from 'vue-router'
@@ -196,7 +197,7 @@ const router = createRouter({
 ```
 
 ### 2. Pinia (Vuex 4 대체) - 상태 관리
-애플리케이션의 전역 상태를 관리합니다.
+애플리케이션의 전역 상태 관리
 
 ```js
 import { defineStore } from 'pinia'
@@ -217,7 +218,7 @@ export const useCounterStore = defineStore('counter', {
 ```
 
 ### 3. Vue CLI / Vite
-프로젝트 설정과 빌드 도구입니다.
+프로젝트 설정/빌드 도구
 
 ```bash
 # Vue CLI
