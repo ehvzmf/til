@@ -7,8 +7,11 @@
 <br />
 
 # 🐛 Issue
-TanStack Query에서 `queryClient.setDefaultOptions()`로 전역 Mutation 콜백을 설정한 후, 개별 Mutation에서 이 전역 콜백을 수동으로 호출할 때 TypeScript 타입 에러가 발생하는 문제입니다.
+> TanStack Query에서 `queryClient.setDefaultOptions()`로 전역 Mutation 콜백을 설정한 후, <br />
+> 개별 Mutation에서 이 전역 콜백을 수동으로 호출할 때 TypeScript 타입 에러가 발생 <br />
+> (+ 전역 콜백 동작 x)
 
+<br />
 **에러 메시지:**
 ```
 Type '(data: unknown, variables: unknown, context: unknown, mutateOptions?: MutateOptions<unknown, unknown, unknown, unknown> | undefined) => unknown' 
@@ -99,7 +102,7 @@ type MutationOnSuccess<TData, TError, TVariables, TContext> = (
 - **결과**: 타입 호환성 에러 발생
 
 ### 3. JavaScript 런타임 동작
-JavaScript에서는 함수 호출 시 정의된 파라미터보다 적은 수의 인자를 전달해도 정상 동작합니다:
+JavaScript에서는 함수 호출 시 정의된 파라미터보다 적은 수의 인자를 전달해도 정상 동작:
 ```js
 function example(a, b, c, d) {
   console.log(a, b, c); // d는 undefined
