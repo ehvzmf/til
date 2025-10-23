@@ -9,18 +9,17 @@
 
 # 📝 Learnings
 
-## React Slick이란?
-React Slick은 jQuery의 Slick 카루셀을 React용으로 포팅한 라이브러리입니다. 반응형 슬라이더/캐러셀을 쉽게 구현할 수 있으며, 다양한 커스터마이징 옵션을 제공합니다.
+## React Slick?
+- jQuery의 Slick 카루셀을 React용으로 포팅한 라이브러리
+- 반응형 슬라이더/캐러셀 간단히 구현 가능
+- 다양한 커스터마이징 옵션 제공 
 
 ## 설치 및 기본 설정
 
 ### 1. 패키지 설치
 ```bash
 # React Slick과 필수 CSS 설치
-npm install react-slick slick-carousel
-
-# 또는 yarn
-yarn add react-slick slick-carousel
+pnpm add react-slick slick-carousel
 ```
 
 ### 2. CSS 임포트
@@ -28,17 +27,12 @@ yarn add react-slick slick-carousel
 // CSS 파일 임포트 (필수)
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-// 또는 SCSS 파일에서
-// @import "~slick-carousel/slick/slick.css";
-// @import "~slick-carousel/slick/slick-theme.css";
 ```
 
 ## 기본 사용법
 
-### 1. 단순한 슬라이더
+### 1. Simple Slider
 ```tsx
-import React from 'react';
 import Slider from 'react-slick';
 
 const SimpleSlider = () => {
