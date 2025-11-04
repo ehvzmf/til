@@ -1,97 +1,34 @@
-# TIL: MUI Tabs 활성 탭 재클릭 시 이벤트가 발생하지 않는 문제
+> 📝 Date: 2025-11-05
 
-## 문제 상황
+> 🐛 Issue Date: 2025-08-04
 
-React에서 MUI(Material-UI)의 Tabs 컴포넌트를 사용할 때, 이미 활성화된 탭을 다시 클릭해도 `onChange` 이벤트가 발생하지 않는 문제를 발견했습니다.
+<br />
 
-원하는 동작:
-- 사용자가 현재 활성화된 탭을 다시 클릭할 때 페이지 새로고침
-- 스크롤이 맨 위로 올라가도록 처리
+# 🐛 Issue
+- MUI Tabs에서 활성 탭 재클릭 시 onChange 이벤트가 발생하지 않아 새로고침 기능 구현 불가
 
-하지만 MUI Tabs는 이미 선택된 탭을 다시 클릭할 때 이벤트를 발생시키지 않아 이 기능을 구현하기 어려웠습니다.
+<br />
 
-## 코드 예시
+# 🔍 Context
+- 환경: React 18, MUI 5, React Router DOM 6
+- 발생 조건: 이미 활성화된 탭을 다시 클릭할 때 페이지 새로고침 또는 스크롤 초기화가 필요한 상황
 
-아래는 이 문제를 보여주는 간소화된 코드입니다:
+<br />
 
-```tsx
-import { Box, Tabs, Tab, useTheme } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SyntheticEvent } from 'react';
+# 💡 Solution
+## 시도한 방법들
+1. ❌ handleChange에서 현재 path와 비교 - 이벤트 자체가 발생하지 않음
+2. ❌ useEffect로 현재 탭 변화 감지 - 같은 탭 클릭 시 값이 변하지 않음
+3. ✅ 각 Tab에 onClick 이벤트 직접 추가
 
-const tabs = [
-  { label: '홈', path: '/' },
-  { label: '인기투표', path: '/vote' },
-  { label: '게시판', path: '/board' },
-];
+<br />
 
-export const NavigationTab = () => {
-  const theme = useTheme();
-  const location = useLocation();
-  const navigate = useNavigate();
+## 최종 해결 방법
 
-  const getCurrentTab = () => {
-    const currentPath = location.pathname;
-    
-    for (let i = 0; i < tabs.length; i++) {
-      if (tabs[i].path === '/') {
-        if (currentPath === '/') return i;
-      } else {
-        if (currentPath.startsWith(tabs[i].path)) return i;
-      }
-    }
-    
-    return false;
-  };
+### 원인
+MUI Tabs는 이미 활성화된 탭 재클릭 시 onChange 이벤트를 발생시키지 않도록 설계됨 (불필요한 렌더링 방지)
 
-  const currentTab = getCurrentTab();
-  
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    const targetPath = tabs[newValue].path;
-    const currentPath = location.pathname;
-    
-    // trim() 추가하여 확실한 매칭 확인
-    const cleanTargetPath = targetPath.trim();
-    const cleanCurrentPath = currentPath.trim();
-    
-    console.log(`"${cleanTargetPath}" === "${cleanCurrentPath}"?`, cleanTargetPath === cleanCurrentPath);
-    
-    if (cleanTargetPath === cleanCurrentPath) {
-      window.location.reload();
-    } else {
-      navigate(cleanTargetPath);
-    }
-  };
-
-  return (
-    <Box sx={{ mb: '6px' }}>
-      <Tabs
-        value={currentTab}
-        onChange={handleChange}
-        variant='standard'
-        centered
-        textColor="inherit"
-        // 스타일 관련 속성들...
-      >
-        {tabs.map((tab) => (
-          <Tab key={tab.path} label={tab.label} />
-        ))}
-      </Tabs>     
-    </Box>
-  );
-}
-```
-
-## 핵심 문제점
-
-MUI Tabs 컴포넌트는 **이미 활성화된 탭(value로 지정된 탭)을 다시 클릭하면 onChange 이벤트를 발생시키지 않도록** 설계되어 있습니다. 이는 MUI의 의도적인 디자인 결정으로, 불필요한 렌더링을 방지하기 위함입니다.
-
-## 해결 방법
-
-이 문제를 해결하기 위한 몇 가지 접근법:
-
-### 1. 각 Tab에 onClick 이벤트 추가하기
-
+### 해결책 1: Tab 컴포넌트에 onClick 추가
 ```tsx
 {tabs.map((tab, index) => (
   <Tab 
@@ -106,58 +43,34 @@ MUI Tabs 컴포넌트는 **이미 활성화된 탭(value로 지정된 탭)을 �
 ))}
 ```
 
-이 방법은 Tab 컴포넌트에 직접 onClick 이벤트 핸들러를 추가합니다. 현재 탭과 클릭된 탭이 동일하면 페이지를 새로고침합니다.
-
-### 2. 커스텀 Tab 컴포넌트 만들기
-
+### 해결책 2: 커스텀 Tab 컴포넌트
 ```tsx
-const CustomTab = (props) => {
-  const { value, index, ...other } = props;
+const CustomTab = ({ value, index, onClick, ...props }) => {
   const isSelected = value === index;
   
-  const handleClick = () => {
+  const handleClick = (event) => {
     if (isSelected) {
       window.location.reload();
     }
+    onClick?.(event);
   };
   
-  return <Tab onClick={handleClick} {...other} />;
+  return <Tab onClick={handleClick} {...props} />;
 };
+```
 
-// 사용 예시
+### 해결책 3: 스크롤만 초기화하는 경우
+```tsx
 {tabs.map((tab, index) => (
-  <CustomTab 
+  <Tab 
     key={tab.path} 
-    label={tab.label}
-    value={currentTab}
-    index={index}
+    label={tab.label} 
+    onClick={() => {
+      if (currentTab === index) {
+        window.scrollTo(0, 0);
+        // 추가적으로 상태 초기화 등 수행
+      }
+    }}
   />
 ))}
 ```
-
-### 3. useEffect와 참조 변수 활용
-
-```tsx
-const NavigationTab = () => {
-  // ... 기존 코드 ...
-  
-  const prevTabRef = useRef(currentTab);
-  
-  useEffect(() => {
-    if (prevTabRef.current === currentTab) {
-      // 같은 탭을 다시 클릭했을 때의 처리
-      window.scrollTo(0, 0);
-      // 필요하다면 여기서 추가 작업 수행
-    }
-    prevTabRef.current = currentTab;
-  }, [currentTab]);
-  
-  // ... 나머지 코드 ...
-};
-```
-
-## 결론
-
-MUI Tabs 컴포넌트는 사용자 경험을 최적화하기 위해 이미 활성화된 탭을 다시 클릭해도 onChange 이벤트를 발생시키지 않습니다. 같은 탭을 클릭했을 때 특정 동작(새로고침, 스크롤 위치 초기화 등)을 원한다면, 위에서 제안한 방법 중 하나를 사용하여 이 제한을 우회할 수 있습니다.
-
-이런 작은 UX 디테일에 신경 쓰는 것이 사용자 경험을 향상시키는 데 큰 도움이 됩니다.
