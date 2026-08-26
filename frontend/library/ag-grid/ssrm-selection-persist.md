@@ -166,14 +166,19 @@ ag-grid 사용자 선택 --(source 필터 후)-- -> ref(누적)
 2. **전체 선택 상태가 새 페이지로 carry over된다.** `deselectAll()`을 새 페이지 그리기 전에 미리 쳐야 깜박임이 없다.
 3. **`selectAll: 'currentPage'`는 SSRM에서 워닝을 낸다.** (clientSide row model만 정식 지원) 그러나 이 옵션이 있어야 헤더 체크박스가 '전체 페이지'가 아니라 '현재 페이지만' 토글한다. 제거하면 기본값 `'all'`로 바뀌어 동작이 깨지므로 워닝을 감수한다.
 4. **`getRowId`는 SSRM 선택 유지에 필수.** 페이지 전환 시 id 기준으로 노드를 식별해 선택을 올바르게 유지/복원한다. (없으면 warning #188)
-5. 
-6.
+5. **`setSelected(value, clear, source)`의 source 인자**로 프로그램 선택과 사용자 선택을 구분할 수 있다. `onSelectionChanged`에서 source로 필터링해 자동 이벤트를 무시하지 않으면 ref 오염/무한루프 발생
+6. **헤더 체크박스 상태(checked/empty/indeterminate)는 ag-grid가 자동 관리.** 현재 렌더링된 행 기준. 페이지 전환 후 ref 매칭이 부분적이면 indetermination가 되는데, 이는 정상 동작
+(나는 empty로 수정하긴 함)
 
 ## Debugging Tip
-- 
+- 처음엔 `console.debug`로 각 이벤트(`onPaginationChanged`, `onModelUpdated`, `onSelectionChanged`의 `params.source`, `getRenderedNodes().length`, ref 카운트)를 찍으며 흐름 확인
+- 캐시 hit/miss를 구분하려면 `onModelUpdated`가 발화하는지 여부를 로그로 체크. "복귀했는데 `onModelUpdated`가 안 찍힌다" = hit
+- 복원이 안되면 어느 이벤트에만 복원 로직이 걸려 있는지 먼저 의심.
 
 ## 핵심 교훈
-> SSRM에서 
+> SSRM에서 "이벤트 A에만 로직을 걸었더니 캐시 hit/miss에 따라 A가 안 불리는 케이스가 있었다. 
+> 타이밍 의존 로직은 항상 발화하는 이벤트(여기서는 `onPaginationChanged`)를 기본 트리거로 쓰고,
+> 보조 이벤트(`onModelUpdated`)는 idempotent하게 중복으로 걸어 blind spot을 메우자.
 
 <br />
 
