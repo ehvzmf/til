@@ -82,8 +82,16 @@ onPaginationChanged: (params) => {
 		params.api.deselectAll();
 
 		// 2) 같은 시점에 즉시 복원
-		// 		- 
+		// 		- 캐시 hit(이전 페이지 복귀): 노드가 이미 준비되어 즉시 복원
+		//		- 캐시 miss(처음 가는 페이지): 노드가 없어 rAF로 미뤄지고, 데이터 로드 후 onModelUpdated에서 최종 복원
+		restoreSelection();
+	}
+	if (params.newPageSize) {
+		setTimeout(() => params.api.refreshServerSide({ purge: true }), 0);
+	}
+},
 
+// 캐시 miss 전용: 데이터 로드 후 모델 갱신 시 발화
 onModelUpdated: () => {
 	restoreSelection();
 },
@@ -91,10 +99,81 @@ onModelUpdated: () => {
 
 `restoreSelection()`의 복원 로직 (개념적):
 ```js
+const restoreSelection = useCallback(() => {
+	// 외부 ref에 "사용자가 의도적으로 선택한 행"의 id 목록을 보관한다.
+	// ag-grid 선택 상태와는 별개로, 페이지를 오가며 살아남아야 하는 출처.
+	const selectIds = new Set(selectedRef.current.map(/* id getter */));
+
+	const applyRestore = () => {
+		const rendered = api.getRenderedNodes();
+		if (!rendered.length) return false; // 노드 미준비 -> 호출 측에서 rAF 재시도
+		rendered.forEach((node) => {
+			if (!node.data) return;
+			const shouldBe = selectedIds.has(node.data.id);
+			if (node.isSelected() !== shouldBe) {
+				// source='api'로 지정 -> 사용자 선택과 구분해 무한 루프/오염 방지
+				node.setSelected(shouldBe, false, 'api');
+			}
+		});
+		return true;
+	};
+	if (!applyRestore()) requestAnimationFrame(applyRestore);
+}, [gridRef]);
 ```
 
+## 왜 두 이벤트에 같은 로직을 걸어도 안전한가 (idempotent)
+`restoreSelection()`은 `isSelected() !== shouldBe`일 때만 `setSelected`를 호출한다. **이미 맞은 상태면 아무것도 안 한다.** 그래서:
+- 캐시 hit: `onPaginationChanged`에서만 복원 -> OK
+- 캐시 miss: `onPaginationChanged`(rAF 미룸) + `onModelUpdated` -> 한쪽만 실제 효과, 다른 쪽은 no-op
+이 idempotent 성질 덕분에 "캐시 hit/miss를 미리 판별"하는 분기를 만들 필요 없이 **양쪽 경로에 같은 복원 로직을 걸어두는** 단순한 구조로 잡을 수 있다.
 
+## 자동 선택 이벤트 무시 (오염 방지)
+`onSelectionChanged` 핸들러는 **사용자 의도**만 반영해야 한다. 그런데
+`deselectAll()` / `setSelected(..., 'api') / 페이지 전환으로 행이 교체될 때
+ag-grid가 자동으로 `onSelectionChanged`를 발화시킨다. 이걸 그대로 처리하면: 
 
+- `deselectAll()` -> "사용자가 전체 해제"로 오인 -> ref가 비워짐 -> 복원 불가
+- 페이지 전환 -> carry over된 선택이 "사용자 선택"으로 ref에 섞임
+
+그래서 source로 필터링한다:
+
+```js
+const handleSelectionChanged = (params) => {
+	// 'api': restoreSelection/deselectAll 등 프로그램 호출
+	// 'rowDataChanged': 페이지 전환으로 행이 교체될 때 ag-grid 내부 발화
+	if (params.source === 'api' || params.source === 'rowDataChanged') return;
+	// ...이하 사용자 실제 선택만 ref에 반영 
+```
+
+> `setSelected(value, clearSelection, source)`의 세 번째 인자로 `'api'`를
+> 넘기면, 그 호출에서 발화하는 `onSelectionChanged`의 `params.source`가
+> `'api'`로 오게 된다.
+
+## 출처 분리: ref vs ag-grid 상태
+페이지를 오가며 살아남아야 하는 "선택 목록"은 **ag-grid의 선택 상태와
+분리된 별도 저장소(ref)**에 보관한다. ag-grid 선택 상태는 페이지 전환/
+`deselectAll()`등으로 언제든 리셋될 수 있기 때문.
+
+복원 흐름:
+```
+ref(신뢰 출처) --복원-- -> ag-grid 노드 선택 상태 (표시용)
+ag-grid 사용자 선택 --(source 필터 후)-- -> ref(누적)
+```
+
+## ag-grid v35 SSRM 선택 관련 함정 정리
+
+1. **`onModelUpdated`는 캐시 hit에서 안 불린다.** 페이지 전환 후 반드시 뭔가 해야 한다면 `onPaginationChanged`에도 걸어야 한다.
+2. **전체 선택 상태가 새 페이지로 carry over된다.** `deselectAll()`을 새 페이지 그리기 전에 미리 쳐야 깜박임이 없다.
+3. **`selectAll: 'currentPage'`는 SSRM에서 워닝을 낸다.** (clientSide row model만 정식 지원) 그러나 이 옵션이 있어야 헤더 체크박스가 '전체 페이지'가 아니라 '현재 페이지만' 토글한다. 제거하면 기본값 `'all'`로 바뀌어 동작이 깨지므로 워닝을 감수한다.
+4. **`getRowId`는 SSRM 선택 유지에 필수.** 페이지 전환 시 id 기준으로 노드를 식별해 선택을 올바르게 유지/복원한다. (없으면 warning #188)
+5. 
+6.
+
+## Debugging Tip
+- 
+
+## 핵심 교훈
+> SSRM에서 
 
 <br />
 
