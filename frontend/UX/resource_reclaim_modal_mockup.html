@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리소스 회수 모달 와이어프레임</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root {
+    --surface-0: #f1efe8;
+    --surface-1: #f7f6f2;
+    --surface-2: #ffffff;
+    --text-primary: #171717;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: #e3e1da;
+    --border-strong: #cfcdc4;
+    --border-accent: #378add;
+    --bg-warning: #faeeda;
+    --text-warning: #633806;
+    --bg-danger: #fcebeb;
+    --text-danger: #791f1f;
+    --bg-pro: #eeedfe;
+    --text-pro: #3c3489;
+    --bg-accent: #e6f1fb;
+    --text-accent: #0c447c;
+    --fill-accent: #378add;
+    --on-accent: #ffffff;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    background: var(--surface-0);
+    margin: 0;
+    padding: 40px 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .page { width: 100%; max-width: 420px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tab-btn {
+    flex: 1; font-size: 12px; padding: 7px 4px; border-radius: var(--radius);
+    background: transparent; color: var(--text-secondary); border: 0.5px solid var(--border-strong);
+    cursor: pointer; font-family: inherit;
+  }
+  .tab-btn.active { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+  .wrap { background: var(--surface-1); border-radius: 12px; padding: 14px; position: relative; }
+  .card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 16px; }
+  .breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); margin-bottom: 10px; flex-wrap: wrap; }
+  .breadcrumb .current { color: var(--text-primary); font-weight: 500; }
+  .status-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 12px; background: var(--bg-warning); }
+  .status-row span { font-size: 13px; font-weight: 500; color: var(--text-warning); }
+  .reason-block { border-top: 0.5px solid var(--border); padding-top: 12px; margin-bottom: 10px; }
+  .reason-tag { font-size: 12px; padding: 2px 8px; border-radius: var(--radius); display: inline-block; margin-bottom: 6px; }
+  .reason-msg { font-size: 13px; color: var(--text-secondary); margin: 0 0 6px; }
+  .toggle-btn { width: 100%; text-align: left; background: transparent; border: none; padding: 4px 0; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; }
+  .toggle-btn.between { justify-content: space-between; }
+  .toggle-btn i { transition: transform 0.15s; }
+  .metric-body { display: none; height: 100px; margin-top: 6px; background: var(--surface-1); border-radius: var(--radius); align-items: center; justify-content: center; font-size: 12px; color: var(--text-muted); }
+  .action-section { border-top: 0.5px solid var(--border); padding-top: 12px; margin-bottom: 8px; }
+  .primary-btn { width: 100%; font-size: 13px; padding: 8px; background: var(--fill-accent); color: var(--on-accent); border: none; border-radius: var(--radius); margin-bottom: 4px; cursor: pointer; font-family: inherit; }
+  .hint { font-size: 11px; color: var(--text-muted); margin: 0 0 12px; }
+  .link-action { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-accent); text-decoration: none; margin-bottom: 8px; }
+  .text-link { font-size: 12px; color: var(--text-muted); text-decoration: underline; }
+  .history-section { border-top: 0.5px solid var(--border); padding-top: 8px; }
+  .history-body { display: none; font-size: 12px; color: var(--text-muted); padding-top: 6px; }
+  .confirm-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.45); border-radius: 12px; align-items: center; justify-content: center; padding: 20px; }
+  .confirm-box { background: var(--surface-2); border-radius: 12px; padding: 16px; width: 100%; }
+  .confirm-box p.title { font-size: 14px; font-weight: 500; margin: 0 0 8px; color: var(--text-primary); }
+  .confirm-box p.desc { font-size: 12px; color: var(--text-secondary); margin: 0 0 14px; line-height: 1.6; }
+  .confirm-actions { display: flex; gap: 8px; }
+  .confirm-actions button { flex: 1; font-size: 13px; padding: 8px; border-radius: var(--radius); cursor: pointer; font-family: inherit; }
+  .btn-cancel { background: transparent; border: 0.5px solid var(--border-strong); color: var(--text-primary); }
+  .btn-confirm { background: var(--fill-accent); color: var(--on-accent); border: none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="tabs">
+    <button class="tab-btn active" data-key="under">사용률 저조</button>
+    <button class="tab-btn" data-key="prune">장기 미사용</button>
+    <button class="tab-btn" data-key="over">한도 초과</button>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="breadcrumb">
+        <span>계정 A</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+        <span>프로젝트 B</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+        <span class="current">GPU-Resource-01</span>
+      </div>
+
+      <div class="status-row">
+        <span>회수 예정</span>
+        <span>D-27</span>
+      </div>
+
+      <div class="reason-block">
+        <span class="reason-tag" id="reason-tag"></span>
+        <p class="reason-msg" id="reason-msg"></p>
+        <button class="toggle-btn" id="metric-toggle">
+          <i class="ti ti-chevron-down" style="font-size:14px"></i>
+          <span>사용률 추이 보기</span>
+        </button>
+        <div class="metric-body" id="metric-body">(사용률 추이 차트)</div>
+      </div>
+
+      <div class="action-section" id="action-section"></div>
+
+      <div class="history-section">
+        <button class="toggle-btn between" id="history-toggle">
+          <span>이력 보기</span>
+          <i class="ti ti-chevron-down" style="font-size:14px"></i>
+        </button>
+        <div class="history-body" id="history-body">선정일 2026-09-01 · 안내일 2026-09-03</div>
+      </div>
+    </div>
+
+    <div class="confirm-overlay" id="confirm-overlay">
+      <div class="confirm-box">
+        <p class="title">자원량을 자동으로 조정할까요?</p>
+        <p class="desc">config, env 등 리소스 설정이 한 번에 일괄 조정되며 되돌릴 수 없습니다.</p>
+        <div class="confirm-actions">
+          <button class="btn-cancel" id="confirm-cancel">취소</button>
+          <button class="btn-confirm" id="confirm-ok">조정</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const reasons = {
+  under: {
+    tagBg: 'var(--bg-warning)', tagText: 'var(--text-warning)', tag: '사용률 저조',
+    msg: '최근 45일간 ES 메트릭 없음',
+    showMetric: true,
+    action: `
+      <button class="primary-btn" id="auto-adjust-btn">자원량 자동 조정</button>
+      <p class="hint">config, env가 한 번에 일괄 조정됩니다.</p>
+      <a href="#" class="link-action">리소스 삭제 또는 재배포 <i class="ti ti-external-link" style="font-size:13px"></i></a>
+      <a href="#" class="text-link">회수 대상에서 제외 신청</a>
+    `
+  },
+  prune: {
+    tagBg: 'var(--bg-danger)', tagText: 'var(--text-danger)', tag: '장기 미사용',
+    msg: '마지막 사용일 2026-08-01 (49일 경과)',
+    showMetric: false,
+    action: `
+      <a href="#" class="link-action">메트릭 탭에서 재배포 <i class="ti ti-external-link" style="font-size:13px"></i></a>
+      <a href="#" class="link-action">리소스 삭제 <i class="ti ti-external-link" style="font-size:13px"></i></a>
+    `
+  },
+  over: {
+    tagBg: 'var(--bg-pro)', tagText: 'var(--text-pro)', tag: '자원한도 초과',
+    msg: '할당 120% / 프로젝트 한도 100%',
+    showMetric: false,
+    action: `
+      <a href="#" class="link-action">자원관리 메뉴로 이동 <i class="ti ti-external-link" style="font-size:13px"></i></a>
+    `
+  }
+};
+
+function render(key) {
+  const r = reasons[key];
+  const tagEl = document.getElementById('reason-tag');
+  tagEl.style.background = r.tagBg;
+  tagEl.style.color = r.tagText;
+  tagEl.textContent = r.tag;
+  document.getElementById('reason-msg').textContent = r.msg;
+  document.getElementById('action-section').innerHTML = r.action;
+
+  const metricToggle = document.getElementById('metric-toggle');
+  const metricBody = document.getElementById('metric-body');
+  metricToggle.style.display = r.showMetric ? 'flex' : 'none';
+  metricBody.style.display = 'none';
+  metricToggle.querySelector('i').style.transform = 'rotate(0deg)';
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.key === key);
+  });
+
+  const autoBtn = document.getElementById('auto-adjust-btn');
+  if (autoBtn) {
+    autoBtn.addEventListener('click', () => {
+      document.getElementById('confirm-overlay').style.display = 'flex';
+    });
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => render(btn.dataset.key));
+});
+
+let metricOpen = false;
+document.getElementById('metric-toggle').addEventListener('click', () => {
+  metricOpen = !metricOpen;
+  const body = document.getElementById('metric-body');
+  body.style.display = metricOpen ? 'flex' : 'none';
+  document.getElementById('metric-toggle').querySelector('i').style.transform = metricOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+});
+
+let histOpen = false;
+document.getElementById('history-toggle').addEventListener('click', () => {
+  histOpen = !histOpen;
+  const body = document.getElementById('history-body');
+  body.style.display = histOpen ? 'block' : 'none';
+  document.getElementById('history-toggle').querySelector('i').style.transform = histOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+});
+
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').style.display = 'none';
+});
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').style.display = 'none';
+});
+
+render('under');
+</script>
+</body>
+</html>
