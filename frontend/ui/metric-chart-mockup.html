@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU / 메모리 일별 사용률 차트 목업</title>
+<style>
+/* 디자인 토큰: 라이트 / 다크 */
+:root{
+  --surface:#fcfcfb; --tile:#f1f0ec; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --track:#e1e0d9;
+  --cpu-avg:#2a78d6; --cpu-max:#7fb1ea; --mem-avg:#6250d6; --mem-max:#a99fe8; --bad:#d03b3b;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --surface:#1a1a19; --tile:#262624; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --track:#2c2c2a;
+    --cpu-avg:#3987e5; --mem-avg:#9085e9;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px;background:var(--surface);color:var(--ink);
+  font:14px/1.6 "Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.wrap{max-width:720px;margin:0 auto}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 20px}
+.tile{background:var(--tile);border-radius:8px;padding:12px}
+.tile .top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink2)}
+.tile .big{font-size:24px;font-weight:500;margin:4px 0 8px;color:var(--ink)}
+.tile .big small{font-size:12px;font-weight:400;color:var(--ink2)}
+.meter{position:relative;height:8px;background:var(--track);border-radius:4px}
+.meter .avg{position:absolute;left:0;top:0;height:8px;border-radius:4px}
+.meter .max{position:absolute;top:-3px;width:2px;height:14px}
+.tile .bot{display:flex;justify-content:space-between;font-size:12px;margin-top:8px;color:var(--ink2)}
+.tile .bot .warn{color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px;font-size:12px;color:var(--ink2)}
+.legend span{display:flex;align-items:center;gap:5px}
+.chart{position:relative;width:100%;height:260px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tiles" id="tiles"></div>
+  <div class="legend" aria-hidden="true">
+    <span><svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="var(--cpu-avg)" stroke-width="2.5"/></svg>CPU 평균</span>
+    <span><svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="var(--cpu-max)" stroke-width="1.2"/></svg>CPU 최대</span>
+    <span><svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="var(--mem-avg)" stroke-width="2.5" stroke-dasharray="6 3"/></svg>메모리 평균</span>
+    <span><svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="var(--mem-max)" stroke-width="1.2" stroke-dasharray="3 3"/></svg>메모리 최대</span>
+    <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--bad)"/></svg>85% 초과</span>
+  </div>
+  <div class="chart"><canvas id="c" role="img" aria-label="최근 30일 일별 CPU와 메모리의 한도 대비 사용률 평균과 최대 라인 차트. y축 0~100%">최근 30일 CPU·메모리 사용률 평균과 최대 추이</canvas></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ---- 샘플 데이터 (실제로는 API 응답) ----
+   일별 지수 30건. Limit은 절대값, Avg/Max는 한도 대비 %(0~100). */
+let seed = 23;
+const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const N = 30, END = new Date(2026, 9, 14);
+const gen = (b, drift, a, p, i) => {
+  const v = b + drift * i / N + a * Math.sin(i / 2.3) + rnd() * a;
+  return [Math.round(v), Math.min(96, Math.round(v + p * (0.4 + rnd() * 0.6)))];
+};
+const DATA = Array.from({ length: N }, (_, i) => {
+  const d = new Date(END); d.setDate(END.getDate() - (N - 1 - i));
+  const [cA, cM] = gen(32, 6, 5, 22, i), [mA, mM] = gen(52, 8, 4, 26, i);
+  return { date: d.toISOString().slice(0, 10), cpuLimit: 0.5, cpuAvg: cA, cpuMax: cM, memLimit: 5, memAvg: mA, memMax: mM };
+});
+
+/* ---- 공통 ---- */
+const WARN = 85;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mmdd = s => s.slice(5).replace('-', '/');
+const abs = (limit, pct) => (limit * pct / 100).toFixed(2);
+const SERIES = [
+  { key: 'cpu', name: 'CPU', unit: 'core', avgColor: '--cpu-avg', maxColor: '--cpu-max', avgDash: [], maxDash: [] },
+  { key: 'mem', name: '메모리', unit: 'GiB', avgColor: '--mem-avg', maxColor: '--mem-max', avgDash: [6, 3], maxDash: [3, 3] },
+];
+
+/* ---- 요약 카드: 가장 최근 일자 ---- */
+const last = DATA[DATA.length - 1];
+document.getElementById('tiles').innerHTML = SERIES.map(s => {
+  const limit = last[s.key + 'Limit'], avg = last[s.key + 'Avg'], max = last[s.key + 'Max'], bad = max > WARN;
+  return `<div class="tile">
+    <div class="top"><span>${s.name} · ${mmdd(last.date)}</span><span>한도 ${limit} ${s.unit}</span></div>
+    <div class="big">${avg}%<small> 평균</small></div>
+    <div class="meter">
+      <div class="avg" style="width:${avg}%;background:var(${s.avgColor})"></div>
+      <div class="max" style="left:calc(${max}% - 1px);background:${bad ? 'var(--bad)' : 'var(' + s.maxColor + ')'}"></div>
+    </div>
+    <div class="bot"><span>${abs(limit, avg)} ${s.unit}</span><span class="${bad ? 'warn' : ''}">최대 ${max}%${bad ? ' · 경고' : ''}</span></div>
+  </div>`;
+}).join('');
+
+/* ---- 라인 차트: y축 하나, 0~100% ---- */
+const datasets = [];
+SERIES.forEach(s => {
+  datasets.push({
+    label: s.name + ' 최대', data: DATA.map(d => d[s.key + 'Max']),
+    borderColor: css(s.maxColor), borderWidth: 1.2, borderDash: s.maxDash, tension: .25,
+    pointRadius: DATA.map(d => d[s.key + 'Max'] > WARN ? 4 : 0),
+    pointBackgroundColor: css('--bad'), pointBorderColor: css('--bad'), pointHoverRadius: 4, _s: s,
+  });
+  datasets.push({
+    label: s.name + ' 평균', data: DATA.map(d => d[s.key + 'Avg']),
+    borderColor: css(s.avgColor), borderWidth: 2.5, borderDash: s.avgDash, tension: .25,
+    pointRadius: 0, pointHoverRadius: 4, _s: s,
+  });
+});
+new Chart(document.getElementById('c'), {
+  type: 'line',
+  data: { labels: DATA.map(d => mmdd(d.date)), datasets },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: items => DATA[items[0].dataIndex].date,
+          label: c => {
+            const s = c.dataset._s, limit = DATA[c.dataIndex][s.key + 'Limit'];
+            return `${c.dataset.label}: ${c.parsed.y}% (${abs(limit, c.parsed.y)} ${s.unit})`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: css('--muted'), maxTicksLimit: 6, maxRotation: 0, font: { size: 11 } } },
+      y: { min: 0, max: 100, grid: { color: css('--grid') }, border: { display: false },
+           ticks: { color: css('--muted'), stepSize: 25, callback: v => v + '%', font: { size: 11 } } },
+    },
+  },
+});
+</script>
+</body>
+</html>
