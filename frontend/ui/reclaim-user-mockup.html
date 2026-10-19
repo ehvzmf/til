@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자원회수 유저 화면 목업</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--ink:#1F2430;--mu:#5B6472;--line:#DDE1E8;--soft:#EEF0F4;--bg2:#F4F5F8;--accent:#2F5BEA;--hot:#A12626;--hotbg:#FADADA}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:#fff;font:14px/1.5 "Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.opt{background:var(--bg2);border-bottom:1px solid var(--line);padding:8px 40px;font-size:12px;color:var(--mu);display:flex;gap:12px;align-items:center}
+.opt button{border:1px solid #CBD1DB;background:#fff;border-radius:4px;padding:2px 10px;font:inherit;cursor:pointer}
+.opt button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pg{max-width:1200px;margin:0 auto;padding:32px 40px}
+h1{margin:0;font-size:22px}
+.sub{margin:4px 0 0;color:var(--mu)}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--line);margin:20px 0}
+.tab{padding:10px 2px;font-size:15px;font-weight:500;font-family:inherit;color:var(--mu);background:none;border:0;border-bottom:2px solid transparent;cursor:pointer}
+.tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.tile small{display:block;font-size:13px;color:var(--mu)}
+.tile b{font-size:24px;font-weight:500}
+.tile span{font-size:12px;color:var(--mu);margin-left:6px}
+.fl{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.fi{height:36px;border:1px solid #CBD1DB;border-radius:6px;padding:0 12px;font:inherit;background:#fff;color:var(--ink)}
+.ah{display:flex;align-items:center;gap:10px;width:100%;height:44px;padding:0 14px;background:var(--bg2);border:1px solid var(--line);border-radius:6px;font-size:14px;font-weight:700;font-family:inherit;color:var(--ink);margin-top:8px;cursor:pointer;text-align:left}
+.ah em{font-style:normal;font-weight:400;color:var(--mu);font-size:13px}
+.ph{height:36px;display:flex;align-items:center;padding:0 14px 0 34px;font-size:13px;font-weight:500;color:var(--mu)}
+.rw{display:grid;grid-template-columns:1.5fr 1.4fr 1.2fr 1.5fr 120px;align-items:center;gap:12px;min-height:52px;padding:6px 14px 6px 34px;border-bottom:1px solid var(--soft)}
+.rw.acted{background:#F3F6FF}
+.rn{font-weight:700;background:none;border:0;padding:0;font-family:inherit;font-size:14px;color:var(--ink);text-align:left;cursor:pointer}
+.rn:hover{color:var(--accent);text-decoration:underline}
+.c{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.un{background:#EEF0F4;color:#3A4150}.ov{background:#FFEFD9;color:#8A4300}.lo{background:#DDF3EE;color:#0B5E4F}
+.hot{background:var(--hotbg);color:var(--hot)}.ok{background:#EAF0FF;color:#1F3FB0}.done{background:#EEF0F4;color:#3A4150}.rel{background:#DDF3EE;color:#0B5E4F}
+.mu{color:var(--mu);font-size:13px}
+.lk{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;border:1px solid var(--accent);border-radius:6px;padding:6px 10px;white-space:nowrap;background:#fff;cursor:pointer;font-family:inherit}
+.lk.gh{color:var(--mu);border-color:#CBD1DB;font-weight:500}
+.act{justify-self:end}
+.hrow{display:grid;grid-template-columns:130px 1.6fr 1.4fr 1.2fr 1fr;gap:12px;align-items:center;min-height:52px;padding:6px 14px;border-bottom:1px solid var(--soft)}
+.hh{font-size:13px;color:var(--mu);background:var(--bg2);border-radius:6px;min-height:40px}
+.empty{text-align:center;padding:72px 20px;color:var(--mu)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin:12px 0 4px}
+.ov-bg{position:fixed;inset:0;background:rgba(20,24,36,.4);display:none}
+.ov-bg.open{display:block}
+.dr{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100%;background:#fff;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .2s;display:flex;flex-direction:column}
+.ov-bg.open .dr{transform:none}
+.hd{height:56px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-weight:700;flex:none}
+.bd{padding:20px;overflow-y:auto;flex:1}
+.sec{margin:22px 0 8px;font-weight:700}
+.tl{display:flex;gap:12px;padding-bottom:12px}
+.dt{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+.btn{display:flex;justify-content:space-between;align-items:center;width:100%;height:44px;padding:0 14px;border-radius:6px;font-size:14px;font-weight:700;font-family:inherit;text-decoration:none;margin-bottom:8px;border:1px solid var(--accent);color:var(--accent);background:#fff}
+.btn.p{background:var(--accent);color:#fff}
+.btn[disabled]{background:var(--bg2);border-color:var(--line);color:var(--mu);cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:900px){.rw,.hrow{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}.pg{padding:20px}}
+</style>
+</head>
+<body>
+<div class="opt">목업 옵션
+  <button id="o-n" class="on">기본</button><button id="o-e">빈 상태</button>
+  <span>· 행의 리소스명을 누르면 상세 패널이 열려요 · 모든 이름과 수치는 샘플이에요</span>
+</div>
+<main class="pg">
+  <h1>자원회수</h1>
+  <p class="sub">회수 예정인 내 리소스를 확인하고 조치하세요. 조치 후 다음 재평가에서 반영돼요.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-plan" data-tab="plan"></button>
+    <button class="tab" role="tab" id="t-hist" data-tab="hist">처리 이력</button>
+  </div>
+  <section id="plan"></section>
+  <section id="hist" hidden></section>
+</main>
+
+<div class="ov-bg" id="ov"><aside class="dr" role="dialog" aria-modal="true" aria-labelledby="dtt"><div class="hd"><span id="dtt">리소스 상세</span><button id="dx" aria-label="닫기" style="border:0;background:none;font-size:20px;color:var(--mu);cursor:pointer">×</button></div><div class="bd" id="db"></div></aside></div>
+
+<script>
+const TODAY = new Date(2026, 9, 15), NEXT_REEVAL = "10/18 03:00";
+const R = {
+  unused: { label: "미사용 → 삭제", cls: "un", act: "자원 삭제" },
+  over:   { label: "한도 초과 → 회수", cls: "ov", act: "자원 회수" },
+  low:    { label: "사용률 저조 → 최적화", cls: "lo", act: "자원 최적화" },
+};
+const ROWS = [
+  { id: 1, acct: "계정 A", proj: "web-front", name: "batch-worker-01", reason: "unused", ev: "미사용 47일", due: "2026-10-18" },
+  { id: 2, acct: "계정 A", proj: "web-front", name: "api-gateway-02", reason: "over", ev: "한도 대비 120%", due: "2026-10-20" },
+  { id: 3, acct: "계정 A", proj: "web-front", name: "report-svc", reason: "low", ev: "평균 8% · 최대 21%", due: "2026-10-20", acted: true },
+  { id: 4, acct: "계정 A", proj: "web-front", name: "cache-node-03", reason: "low", ev: "평균 11% · 최대 24%", due: "2026-10-24", autoOk: true },
+  { id: 5, acct: "계정 A", proj: "data-batch", name: "etl-runner-07", reason: "unused", ev: "미사용 62일", due: "2026-10-21" },
+  { id: 6, acct: "계정 B", proj: "payments", name: "ledger-job-02", reason: "over", ev: "한도 대비 108%", due: "2026-10-20" },
+  { id: 7, acct: "계정 B", proj: "payments", name: "ledger-cache-01", reason: "unused", ev: "미사용 35일", due: "2026-10-25" },
+  { id: 8, acct: "계정 B", proj: "ops-tools", name: "ops-scheduler", reason: "low", ev: "평균 9% · 최대 19%", due: "2026-10-27", acted: true },
+  { id: 9, acct: "계정 C", proj: "analytics", name: "viz-render-04", reason: "unused", ev: "미사용 90일", due: "2026-10-23" },
+];
+const HIST = [
+  { at: "10/14 14:02", name: "batch-old-02", path: "계정 A › web-front", reason: "unused", res: "done", how: "삭제 완료 · 회수 배치" },
+  { at: "10/12 03:00", name: "api-gateway-05", path: "계정 B › payments", reason: "over", res: "rel", how: "해제 · 한도 조절 후 재평가" },
+  { at: "10/10 14:02", name: "cache-node-01", path: "계정 A › web-front", reason: "low", res: "done", how: "최적화 완료 · 회수 배치" },
+  { at: "10/09 03:00", name: "etl-runner-02", path: "계정 A › data-batch", reason: "unused", res: "rel", how: "해제 · 재배포 후 재평가" },
+  { at: "10/05 11:20", name: "viz-render-01", path: "계정 C › analytics", reason: "unused", res: "done", how: "삭제 완료 · 유저 직접 삭제" },
+];
+const $ = id => document.getElementById(id);
+const dday = s => Math.round((new Date(s) - TODAY) / 864e5);
+const md = s => s.slice(5).replace("-", "/");
+const chip = (cls, t) => `<span class="c ${cls}">${t}</span>`;
+const primary = r => ({ unused: "재배포", over: "한도 조절", low: "한도 조절" })[r.reason];
+let state = { tab: "plan", empty: false, q: "", reason: "", open: new Set(["계정 A"]) };
+
+function dState(r) {
+  if (r.acted) return chip("ok", "조치함 · 재평가 대기");
+  const n = dday(r.due);
+  return chip(n <= 7 ? "hot" : "done", "D-" + n) + ` <span class="mu">${md(r.due)}</span>`;
+}
+function renderPlan() {
+  const rows = state.empty ? [] : ROWS;
+  $("t-plan").textContent = "회수 예정 " + rows.length;
+  if (!rows.length) { $("plan").innerHTML = emptyHtml("회수 예정인 리소스가 없어요", "지금은 조치할 리소스가 없어요. 새로 선정되면 알림으로 알려드려요."); return; }
+  const near = r => Math.min(...ROWS.filter(x => x.reason === r).map(x => dday(x.due)));
+  const cnt = r => ROWS.filter(x => x.reason === r).length;
+  const acted = ROWS.filter(x => x.acted).length;
+  let html = `<div class="tiles">` + ["unused", "over", "low"].map(k =>
+    `<div class="tile"><small>${R[k].label}</small><b>${cnt(k)}건</b><span>최단 D-${near(k)}</span></div>`).join("") +
+    `<div class="tile"><small>조치함 · 재평가 대기</small><b>${acted}건</b><span>다음 재평가 ${NEXT_REEVAL}</span></div></div>
+    <div class="fl"><label for="q" hidden>리소스 검색</label><input id="q" class="fi" style="flex:1;min-width:200px" placeholder="리소스명으로 검색" value="${state.q}">
+    <select id="rs" class="fi" aria-label="사유"><option value="">사유 전체</option>${Object.entries(R).map(([k, v]) => `<option value="${k}"${state.reason === k ? " selected" : ""}>${v.label}</option>`).join("")}</select></div>`;
+  const q = state.q.trim().toLowerCase();
+  const list = ROWS.filter(r => (!q || r.name.includes(q)) && (!state.reason || r.reason === state.reason));
+  if (!list.length) { $("plan").innerHTML = html + emptyHtml("조건에 맞는 리소스가 없어요", "검색어나 필터를 바꿔보세요.", true); bindPlan(); return; }
+  const accts = [...new Set(list.map(r => r.acct))];
+  accts.forEach(a => {
+    const ar = list.filter(r => r.acct === a), open = state.open.has(a) || q || state.reason;
+    html += `<button class="ah" data-acct="${a}" aria-expanded="${!!open}"><span>${open ? "▾" : "▸"}</span>${a}<em>${ar.length}건 · 최단 D-${Math.min(...ar.map(r => dday(r.due)))}</em></button>`;
+    if (!open) return;
+    [...new Set(ar.map(r => r.proj))].forEach(p => {
+      const pr = ar.filter(r => r.proj === p);
+      html += `<div class="ph">프로젝트 ${p} · ${pr.length}건</div>` + pr.map(r => `
+        <div class="rw${r.acted ? " acted" : ""}"><button class="rn" data-id="${r.id}">${r.name}</button>
+        <span>${chip(R[r.reason].cls, R[r.reason].label)}</span><span class="mu">${r.ev}</span><span>${dState(r)}</span>
+        <span class="act">${r.acted ? `<button class="lk gh" data-id="${r.id}">상세</button>` : `<a class="lk" href="#" onclick="return false">${primary(r)} ↗</a>`}</span></div>`).join("");
+    });
+  });
+  $("plan").innerHTML = html; bindPlan();
+}
+function bindPlan() {
+  document.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => { const a = b.dataset.acct; state.open.has(a) ? state.open.delete(a) : state.open.add(a); renderPlan(); });
+  document.querySelectorAll("[data-id]").forEach(b => b.onclick = () => openDrawer(Number(b.dataset.id)));
+  const q = $("q"); if (q) q.oninput = e => { state.q = e.target.value; renderPlan(); const n = $("q"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); };
+  const s = $("rs"); if (s) s.onchange = e => { state.reason = e.target.value; renderPlan(); };
+  const rs = $("reset"); if (rs) rs.onclick = () => { state.q = ""; state.reason = ""; renderPlan(); };
+}
+function emptyHtml(t, d, reset) {
+  return `<div class="empty"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#898781" stroke-width="2" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="M15 25l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${t}</b>${d}${reset ? `<div style="margin-top:12px"><button class="lk" id="reset">필터 초기화</button></div>` : ""}</div>`;
+}
+function renderHist() {
+  const rows = state.empty ? [] : HIST;
+  if (!rows.length) { $("hist").innerHTML = emptyHtml("아직 처리된 이력이 없어요", "회수가 실행되거나 해제된 리소스가 여기에 쌓여요."); return; }
+  $("hist").innerHTML = `<div class="fl"><span class="mu" style="align-self:center">최근 [N]일 · 보관 기간은 정책에 따라 정해져요</span></div>
+    <div class="hrow hh"><span>처리 일시</span><span>리소스</span><span>사유 → 조치</span><span>결과</span><span>처리 방식</span></div>` +
+    rows.map(h => `<div class="hrow"><span class="mu">${h.at}</span><span><b>${h.name}</b><br><span class="mu">${h.path}</span></span><span>${chip(R[h.reason].cls, R[h.reason].label)}</span>
+      <span>${h.res === "rel" ? chip("rel", "회수 해제") : chip("done", R[h.reason].act + " 완료")}</span><span class="mu">${h.how.split(" · ")[1]}</span></div>`).join("");
+}
+/* ---- 상세 패널 ---- */
+function series(seed, base, amp) {
+  let s = seed * 7919 % 233280; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const av = [], mx = [];
+  for (let i = 0; i < 30; i++) { const a = base + amp * Math.sin(i / 2.3) + rnd() * amp; av.push(a); mx.push(Math.min(100, a + amp * 1.6 * (0.5 + rnd()))); }
+  return { av, mx };
+}
+const pts = a => a.map((v, i) => `${(i * 13.6).toFixed(0)},${(120 - v * 1.2).toFixed(0)}`).join(" ");
+function openDrawer(id, metric = "CPU") {
+  const r = ROWS.find(x => x.id === id), k = R[r.reason], n = dday(r.due);
+  const base = r.reason === "over" ? 76 : 8, amp = r.reason === "over" ? 6 : 3;
+  const d = series(r.id + (metric === "CPU" ? 0 : 5), base, amp);
+  const chart = r.reason === "unused"
+    ? `<div class="mu" style="padding:24px 0">${r.ev} · 이 기간 사용 기록이 없어요.</div>`
+    : `<div style="display:flex;gap:6px;margin-bottom:8px">${["CPU", "메모리"].map(m => `<button class="c" data-m="${m}" style="border:0;cursor:pointer;${m === metric ? "background:#2F5BEA;color:#fff" : "background:#EEF0F4;color:#3A4150"}">${m}</button>`).join("")}</div>
+       <div class="mu" style="margin-bottom:4px">${r.ev} (한도 대비)</div>
+       <svg width="100%" viewBox="0 0 440 124" role="img" aria-label="최근 30일 ${metric} 사용률"><line x1="0" y1="119" x2="406" y2="119" stroke="#E1E0D9"/><line x1="0" y1="60" x2="406" y2="60" stroke="#E1E0D9"/><line x1="0" y1="1" x2="406" y2="1" stroke="#E1E0D9"/>
+       <polyline points="${pts(d.mx)}" fill="none" stroke="#7fb1ea" stroke-width="1.2"/><polyline points="${pts(d.av)}" fill="none" stroke="#2a78d6" stroke-width="2.5"/>
+       <text x="410" y="123" font-size="11" fill="#898781">0%</text><text x="410" y="64" font-size="11" fill="#898781">50%</text><text x="410" y="12" font-size="11" fill="#898781">100%</text></svg>`;
+  const links = { unused: [["재배포하기", 1], ["삭제하러 가기", 0]], over: [["한도 조절하기", 1], ["자원 협의 신청", 0]], low: [["한도 조절하기", 1]] }[r.reason];
+  const dd = x => { const t = new Date(r.due); t.setDate(t.getDate() - x); return md(t.toISOString().slice(0, 10)); };
+  $("db").innerHTML = `
+    <div style="font-size:18px;font-weight:700">${r.name}</div><div class="mu" style="margin:2px 0 8px">${r.acct} › ${r.proj}</div>
+    ${chip(k.cls, k.label)} ${r.acted ? chip("ok", "조치함 · 재평가 대기") : ""}
+    <div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border-radius:8px;display:flex;align-items:center;gap:14px">
+      <span style="font-size:26px;font-weight:700;color:${n <= 7 ? "var(--hot)" : "var(--ink)"}">D-${n}</span>
+      <span>${md(r.due)} ${k.act} 예정<br><span class="mu">다음 재평가 ${NEXT_REEVAL}${r.acted ? " · 이 재평가에서 해제될 수 있어요" : ""}</span></span></div>
+    <div class="sec">사용률 근거 <span class="mu" style="font-weight:400">· 최근 30일</span></div>${chart}
+    <div class="sec">진행 이력</div>
+    <div class="tl"><span class="dt"></span><span>${dd(17)} 회수 대상 선정<br><span class="mu">${r.ev}</span></span></div>
+    <div class="tl"><span class="dt"></span><span>${dd(10)} 알림 발송</span></div>
+    ${r.acted ? `<div class="tl"><span class="dt" style="background:#898781"></span><span>${NEXT_REEVAL} 재평가 예정</span></div>` : ""}
+    <div class="sec">조치하기</div>
+    ${links.map(([t, p]) => `<a class="btn${p ? " p" : ""}" href="#" onclick="return false"><span>${t}</span><span>↗</span></a>`).join("")}
+    ${r.reason === "low" ? (r.autoOk ? `<a class="btn" href="#" onclick="return false"><span>자원량 자동조정</span><span>↗</span></a>` : `<button class="btn" disabled><span>자원량 자동조정</span><span style="font-weight:400;font-size:12px">사용 불가</span></button><div class="mu">사용량이 기준치 이하라 자동조정을 쓸 수 없어요.</div>`) : ""}
+    <div class="mu" style="margin-top:8px">조치하면 다음 재평가에서 확인돼요. 예외가 필요하면 관리자에게 문의하세요.</div>`;
+  document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => openDrawer(id, b.dataset.m));
+  $("ov").classList.add("open");
+}
+const closeDrawer = () => $("ov").classList.remove("open");
+$("dx").onclick = closeDrawer;
+$("ov").onclick = e => { if (e.target === $("ov")) closeDrawer(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+
+/* ---- 탭 / 옵션 ---- */
+function render() {
+  $("plan").hidden = state.tab !== "plan"; $("hist").hidden = state.tab !== "hist";
+  $("t-plan").setAttribute("aria-selected", state.tab === "plan"); $("t-hist").setAttribute("aria-selected", state.tab === "hist");
+  $("o-n").className = state.empty ? "" : "on"; $("o-e").className = state.empty ? "on" : "";
+  renderPlan(); renderHist();
+}
+document.querySelector(".tabs").onclick = e => { if (e.target.dataset.tab) { state.tab = e.target.dataset.tab; render(); } };
+$("o-n").onclick = () => { state.empty = false; render(); };
+$("o-e").onclick = () => { state.empty = true; render(); };
+render();
+</script>
+</body>
+</html>
