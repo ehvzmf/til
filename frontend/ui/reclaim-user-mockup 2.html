@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자원회수 유저 화면 목업</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--ink:#1F2430;--mu:#5B6472;--line:#DDE1E8;--soft:#EEF0F4;--bg2:#F4F5F8;--accent:#2F5BEA;--hot:#A12626;--hotbg:#FADADA}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:#fff;font:14px/1.5 "Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.opt{background:var(--bg2);border-bottom:1px solid var(--line);padding:8px 40px;font-size:12px;color:var(--mu);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.opt button{border:1px solid #CBD1DB;background:#fff;border-radius:4px;padding:2px 10px;font:inherit;cursor:pointer}
+.opt button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pg{max-width:1240px;margin:0 auto;padding:32px 40px}
+h1{margin:0;font-size:22px}
+.sub{margin:4px 0 0;color:var(--mu)}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--line);margin:20px 0}
+.tab{padding:10px 2px;font-size:15px;font-weight:500;font-family:inherit;color:var(--mu);background:none;border:0;border-bottom:2px solid transparent;cursor:pointer}
+.tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.tile small{display:block;font-size:13px;color:var(--mu)}
+.tile b{font-size:24px;font-weight:500}
+.tile span{font-size:12px;color:var(--mu);margin-left:6px}
+.fl{display:flex;gap:6px;margin-bottom:12px;align-items:center}
+.fi{height:36px;border:1px solid #CBD1DB;border-radius:6px;padding:0 8px;font:inherit;font-size:13px;background:#fff;color:var(--ink);min-width:0}
+.fl select{width:106px}.fl input[type=date]{width:128px;padding:0 6px}.fl .q{flex:1;min-width:130px;padding:0 10px}
+.fl .rs{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;padding:0 4px}
+.ah{display:flex;align-items:center;gap:10px;width:100%;height:44px;padding:0 14px;background:var(--bg2);border:1px solid var(--line);border-radius:6px;font-size:14px;font-weight:700;font-family:inherit;color:var(--ink);margin-top:8px;cursor:pointer;text-align:left}
+.ah em{font-style:normal;font-weight:400;color:var(--mu);font-size:13px}
+.ph{height:36px;display:flex;align-items:center;padding:0 14px 0 34px;font-size:13px;font-weight:500;color:var(--mu)}
+.rw{display:grid;grid-template-columns:1.8fr 1.3fr 1.4fr 1.4fr 110px;align-items:center;gap:12px;min-height:60px;padding:8px 14px 8px 34px;border-bottom:1px solid var(--soft)}
+.rw.acted{background:#F3F6FF}
+.rn{font-weight:700;background:none;border:0;padding:0;font-family:inherit;font-size:14px;color:var(--ink);text-align:left;cursor:pointer}
+.rn:hover{color:var(--accent);text-decoration:underline}
+.c{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.un{background:#EEF0F4;color:#3A4150}.ov{background:#FFEFD9;color:#8A4300}.lo{background:#DDF3EE;color:#0B5E4F}
+.hot{background:var(--hotbg);color:var(--hot)}.ok{background:#EAF0FF;color:#1F3FB0}.done{background:#EEF0F4;color:#3A4150}.rel{background:#DDF3EE;color:#0B5E4F}.cx{background:#F0E9F8;color:#5B2C83}
+.en{display:inline-block;font-size:11px;font-weight:500;padding:1px 6px;border:1px solid #CBD1DB;border-radius:4px;color:var(--mu);margin-right:4px}
+.en.w{border-color:var(--hot);color:var(--hot);font-weight:700}
+.mu{color:var(--mu);font-size:13px}
+.lk{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;border:1px solid var(--accent);border-radius:6px;padding:6px 10px;white-space:nowrap;background:#fff;cursor:pointer;font-family:inherit}
+.lk.gh{color:var(--mu);border-color:#CBD1DB;font-weight:500}
+.act{justify-self:end}
+.hrow{display:grid;grid-template-columns:110px 1.9fr 1.3fr 1fr 1.4fr;gap:12px;align-items:center;min-height:60px;padding:8px 14px;border-bottom:1px solid var(--soft)}
+.hh{font-size:13px;color:var(--mu);background:var(--bg2);border-radius:6px;min-height:40px}
+.empty{text-align:center;padding:72px 20px;color:var(--mu)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin:12px 0 4px}
+.ov-bg{position:fixed;inset:0;background:rgba(20,24,36,.4);display:none}
+.ov-bg.open{display:block}
+.dr{position:fixed;top:0;right:0;bottom:0;width:500px;max-width:100%;background:#fff;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .2s;display:flex;flex-direction:column}
+.ov-bg.open .dr{transform:none}
+.hd{height:56px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-weight:700;flex:none}
+.bd{padding:20px;overflow-y:auto;flex:1}
+.sec{margin:22px 0 8px;font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:500;color:var(--mu);padding:6px 8px;background:var(--bg2)}
+.tbl td{padding:8px;border-bottom:1px solid var(--soft)}
+.tbl tr.off td{color:var(--mu)}
+.tl{position:relative;padding:0 0 14px 22px}
+.tl::before{content:"";position:absolute;left:4px;top:16px;bottom:-4px;border-left:2px solid var(--line)}
+.tl:last-child::before{display:none}
+.tl.up::before{border-left-style:dashed}
+.dt{position:absolute;left:0;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.tl.up .dt{background:#fff;border:2px solid #898781}
+.tl.end .dt{width:12px;height:12px;left:-1px;top:5px}
+.tl small{color:var(--mu);font-size:12px}
+.btn{display:flex;justify-content:space-between;align-items:center;width:100%;height:44px;padding:0 14px;border-radius:6px;font-size:14px;font-weight:700;font-family:inherit;text-decoration:none;margin-bottom:8px;border:1px solid var(--accent);color:var(--accent);background:#fff}
+.btn.p{background:var(--accent);color:#fff}
+.btn[disabled]{background:var(--bg2);border-color:var(--line);color:var(--mu);cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.en.f{border-color:#8A4300;color:#8A4300;font-weight:700}
+.adm{border:1px dashed #898781;border-radius:8px;padding:12px}
+.ab{display:block;width:100%;height:40px;text-align:left;padding:0 12px;margin-bottom:8px;border:1px solid #CBD1DB;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.ab:last-child{margin-bottom:0}.ab.d{border-color:var(--hot);color:var(--hot);font-weight:700}
+.md{position:fixed;inset:0;background:rgba(20,24,36,.5);display:none;align-items:center;justify-content:center;z-index:20}
+.md.open{display:flex}
+.mb{width:440px;max-width:92%;background:#fff;border-radius:12px;padding:24px}
+.mbtn{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.lk[disabled]{opacity:.4;cursor:not-allowed}
+.wn{background:var(--hotbg);color:var(--hot);border-radius:6px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+@media(max-width:1180px){.fl{flex-wrap:wrap}}
+@media(max-width:900px){.rw,.hrow{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}.pg{padding:20px}}
+</style>
+</head>
+<body>
+<div class="opt">목업 옵션
+  <button id="o-n" class="on">기본</button><button id="o-e">빈 상태</button><span>권한</span><button id="o-u" class="on">유저</button><button id="o-a">관리자</button>
+  <span>· 리소스명을 누르면 상세 패널이 열립니다 · 이름, 수치, 날짜는 모두 샘플입니다</span>
+</div>
+<main class="pg">
+  <h1>자원회수</h1>
+  <p class="sub">회수 예정인 리소스를 확인하시고 조치 부탁드립니다. 조치 후 다음 재평가에서 반영됩니다.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-plan" data-tab="plan"></button>
+    <button class="tab" role="tab" id="t-hist" data-tab="hist">처리 이력</button>
+  </div>
+  <section id="main"></section>
+</main>
+<div class="md" id="md"><div class="mb" role="dialog" aria-modal="true" id="mb"></div></div>
+<div class="ov-bg" id="ov"><aside class="dr" role="dialog" aria-modal="true" aria-labelledby="dtt"><div class="hd"><span id="dtt">리소스 상세</span><button id="dx" aria-label="닫기" style="border:0;background:none;font-size:20px;color:var(--mu);cursor:pointer">×</button></div><div class="bd" id="db"></div></aside></div>
+
+<script>
+const TODAY = new Date(2026, 9, 15), NEXT_REEVAL = "10/18 03:00";
+const R = {
+  unused: { label: "미사용 → 삭제", cls: "un", act: "자원 삭제", done: "삭제" },
+  over: { label: "한도 초과 → 회수", cls: "ov", act: "자원 회수", done: "회수" },
+  low: { label: "사용률 저조 → 최적화", cls: "lo", act: "자원 최적화", done: "최적화" },
+};
+const ST = { done: { label: "회수 완료", cls: "done", c: "#3A4150" }, cancel: { label: "취소", cls: "cx", c: "#5B2C83" }, withdraw: { label: "철회", cls: "rel", c: "#0B5E4F" } };
+const D = (config, env, on, cpu, mem) => ({ config, env, on, cpu, mem });
+const Z = { cpu: [0, 0], mem: [0, 0] }, OFF = ["-", "-"];
+const dep1 = [D("default", "dev", 1, "0.5 core", "1 GiB"), D("default", "prod", 1, "2 core", "4 GiB")];
+const ROWS = [
+  { id: 1, status: "plan", acct: "계정 A", proj: "web-front", name: "batch-worker-01", svc: "배치 잡", plat: "플랫폼 A", reason: "unused", ev: "미사용 47일", due: "2026-10-18", m: Z, dep: [D("default", "dev", 1, "0.5 core", "1 GiB"), D("default", "stg", 0, ...OFF), D("default", "prod", 1, "1 core", "2 GiB")] },
+  { id: 2, status: "plan", acct: "계정 A", proj: "web-front", name: "api-gateway-02", svc: "API 서비스", plat: "플랫폼 B", reason: "over", ev: "한도 대비 최대 120%", due: "2026-10-20", m: { cpu: [84, 100], mem: [63, 88] }, dep: [D("default", "stg", 1, "1 core", "2 GiB"), D("default", "prod", 1, "2 core", "4 GiB")] },
+  { id: 3, status: "plan", acct: "계정 A", proj: "web-front", name: "report-svc", svc: "웹 서비스", plat: "플랫폼 A", reason: "low", ev: "CPU 평균 8% (기준 10% 미만)", due: "2026-10-20", acted: true, long: true, m: { cpu: [8, 21], mem: [28, 41] }, dep: [D("default", "dev", 1, "0.5 core", "1 GiB"), D("default", "prod", 1, "2 core", "4 GiB"), D("high-mem", "prod", 0, ...OFF)] },
+  { id: 4, status: "plan", acct: "계정 A", proj: "web-front", name: "cache-node-03", svc: "API 서비스", plat: "플랫폼 B", reason: "low", ev: "메모리 평균 22% (기준 30% 미만)", due: "2026-10-24", autoOk: true, m: { cpu: [11, 24], mem: [22, 35] }, dep: dep1 },
+  { id: 5, status: "plan", acct: "계정 A", proj: "data-batch", name: "etl-runner-07", svc: "배치 잡", plat: "플랫폼 A", reason: "unused", ev: "미사용 62일", due: "2026-10-21", m: Z, dep: [D("default", "dev", 0, ...OFF), D("default", "prod", 0, ...OFF)] },
+  { id: 6, status: "plan", acct: "계정 B", proj: "payments", name: "ledger-job-02", svc: "API 서비스", plat: "플랫폼 B", reason: "over", ev: "한도 대비 최대 108%", due: "2026-10-20", m: { cpu: [72, 100], mem: [55, 81] }, dep: dep1 },
+  { id: 7, status: "plan", acct: "계정 B", proj: "payments", name: "ledger-cache-01", svc: "웹 서비스", plat: "플랫폼 A", reason: "unused", ev: "미사용 35일", due: "2026-10-25", m: Z, dep: [D("default", "dev", 1, "0.5 core", "1 GiB")] },
+  { id: 8, status: "plan", acct: "계정 B", proj: "ops-tools", name: "ops-scheduler", svc: "배치 잡", plat: "플랫폼 B", reason: "low", ev: "CPU 평균 9% (기준 10% 미만)", due: "2026-10-27", acted: true, m: { cpu: [9, 19], mem: [41, 55] }, dep: dep1 },
+  { id: 9, status: "plan", acct: "계정 C", proj: "analytics", name: "viz-render-04", svc: "웹 서비스", plat: "플랫폼 A", reason: "unused", ev: "미사용 90일", due: "2026-10-23", m: Z, dep: [D("default", "stg", 0, ...OFF)] },
+  { id: 11, status: "done", acct: "계정 A", proj: "web-front", name: "batch-old-02", svc: "배치 잡", plat: "플랫폼 A", reason: "unused", ev: "미사용 71일", due: "2026-10-14", at: "2026-10-14 14:02", how: "회수 배치 실행", m: Z, dep: [D("default", "dev", 0, ...OFF)] },
+  { id: 12, status: "withdraw", acct: "계정 B", proj: "payments", name: "api-gateway-05", svc: "API 서비스", plat: "플랫폼 B", reason: "over", ev: "한도 대비 최대 112%", due: "2026-10-16", at: "2026-10-12 03:00", how: "사유 해소 · 한도 조절 후 재평가", m: { cpu: [70, 100], mem: [52, 79] }, dep: dep1 },
+  { id: 13, status: "done", acct: "계정 A", proj: "web-front", name: "cache-node-01", svc: "API 서비스", plat: "플랫폼 B", reason: "low", ev: "CPU 평균 7% (기준 10% 미만)", due: "2026-10-10", at: "2026-10-10 14:02", how: "회수 배치 실행", m: { cpu: [7, 15], mem: [36, 48] }, dep: dep1 },
+  { id: 14, status: "withdraw", acct: "계정 A", proj: "data-batch", name: "etl-runner-02", svc: "배치 잡", plat: "플랫폼 A", reason: "unused", ev: "미사용 55일", due: "2026-10-12", at: "2026-10-09 03:00", how: "사유 해소 · 재배포 후 재평가", m: Z, dep: [D("default", "prod", 1, "1 core", "2 GiB")] },
+  { id: 15, status: "cancel", acct: "계정 C", proj: "analytics", name: "viz-render-01", svc: "웹 서비스", plat: "플랫폼 A", reason: "unused", ev: "미사용 40일", due: "2026-10-09", at: "2026-10-05 11:20", how: "관리자 요청으로 취소", m: Z, dep: [D("default", "dev", 0, ...OFF)] },
+  { id: 16, status: "done", acct: "계정 B", proj: "payments", name: "ledger-job-01", svc: "API 서비스", plat: "플랫폼 B", reason: "over", ev: "한도 대비 최대 105%", due: "2026-10-04", at: "2026-10-04 14:02", how: "회수 배치 실행", m: { cpu: [68, 100], mem: [50, 77] }, dep: dep1 },
+];
+const Q = (c, m) => ({ cpu: { cur: c[0], min: c[1], req: c[2], use: c[3], thr: 10, u: "core" }, mem: { cur: m[0], min: m[1], req: m[2], use: m[3], thr: 30, u: "GiB" } });
+const QM = { 1: Q([1.5, 0.5, null, 0], [3, 1, null, 0]), 2: Q([3, 1, null, 84], [6, 2, null, 63]), 3: Q([0.5, 0.5, 0.4, 8], [1, 1, 0.9, 28]), 4: Q([2.5, 0.5, 2.5, 11], [5, 1, 3.7, 22]),
+  5: Q([1, 0.5, null, 0], [2, 1, null, 0]), 6: Q([2.5, 0.5, null, 72], [5, 1, null, 55]), 7: Q([0.5, 0.5, null, 0], [1, 1, null, 0]), 8: Q([2.5, 0.5, 2.25, 9], [5, 1, 5, 41]),
+  9: Q([0.5, 0.5, null, 0], [1, 1, null, 0]), 11: Q([0.5, 0.5, null, 0], [1, 1, null, 0]), 12: Q([2.5, 0.5, null, 70], [5, 1, null, 52]), 13: Q([2.5, 0.5, 2.2, 7], [5, 1, 5, 36]),
+  14: Q([1, 0.5, null, 0], [2, 1, null, 0]), 15: Q([0.5, 0.5, null, 0], [1, 1, null, 0]), 16: Q([2.5, 0.5, null, 68], [5, 1, null, 50]) };
+const ELIG = { 3: { ok: false, code: "min-quota-floor" }, 4: { ok: true }, 8: { ok: true } };
+const CODE_MSG = { "min-quota-floor": "현재 자동조정을 사용할 수 없습니다. 할당량이 이미 최소 할당량에 도달했습니다." };
+ROWS.forEach(r => { r.q = QM[r.id]; r.elig = ELIG[r.id]; r.adm = []; r.due0 = r.due; });
+ROWS.find(r => r.id === 3).dep = [D("default", "dev", 1, "0.25 core", "0.5 GiB"), D("default", "prod", 1, "0.25 core", "0.5 GiB"), D("high-mem", "prod", 0, ...OFF)];
+const $ = id => document.getElementById(id);
+const dday = s => Math.round((new Date(s) - TODAY) / 864e5);
+const md = s => s.slice(5, 10).replace("-", "/");
+const chip = (cls, t) => `<span class="c ${cls}">${t}</span>`;
+const primary = r => ({ unused: "재배포", over: "한도 조절", low: "한도 조절" })[r.reason];
+const F0 = { q: "", reason: "", result: "", acct: "", proj: "", env: "", plat: "", from: "", to: "" };
+let state = { tab: "plan", empty: false, admin: false, open: new Set(["계정 A"]), f: { ...F0 }, hist: false };
+
+/* ---- 필터 ---- */
+const uniq = k => [...new Set(ROWS.map(r => r[k]))];
+function pass(r) {
+  const f = state.f, d = r.status === "plan" ? r.due : r.at.slice(0, 10);
+  return (!f.q || r.name.includes(f.q.trim().toLowerCase())) && (!f.reason || r.reason === f.reason) && (!f.result || state.tab === "plan" || r.status === f.result) &&
+    (!f.acct || r.acct === f.acct) && (!f.proj || r.proj === f.proj) && (!f.env || r.dep.some(x => x.env === f.env && x.on)) &&
+    (!f.plat || r.plat === f.plat) && (!f.from || d >= f.from) && (!f.to || d <= f.to);
+}
+function bar(hist) {
+  const f = state.f;
+  const sel = (key, all, opts) => `<select class="fi" data-f="${key}" aria-label="${all}"><option value="">${all}</option>${opts.map(([v, t]) => `<option value="${v}"${f[key] === v ? " selected" : ""}>${t}</option>`).join("")}</select>`;
+  const pair = a => a.map(v => [v, v]);
+  return `<div class="fl"><input class="fi q" data-f="q" placeholder="리소스명 검색" aria-label="리소스명 검색" value="${f.q}">
+    ${sel("reason", "회수 사유", Object.entries(R).map(([k, v]) => [k, v.label]))}
+    ${hist ? sel("result", "결과", Object.entries(ST).map(([k, v]) => [k, v.label])) : ""}
+    ${sel("acct", "계정", pair(uniq("acct")))}${sel("proj", "프로젝트", pair(uniq("proj")))}${sel("env", "env", pair(["dev", "stg", "prod"]))}${sel("plat", "플랫폼", pair(uniq("plat")))}
+    <input class="fi" type="date" data-f="from" aria-label="${hist ? "처리일" : "예정일"} 시작" value="${f.from}"><span class="mu">~</span><input class="fi" type="date" data-f="to" aria-label="${hist ? "처리일" : "예정일"} 끝" value="${f.to}">
+    <button class="rs" id="reset">초기화</button></div>`;
+}
+function bindBar() {
+  document.querySelectorAll("[data-f]").forEach(el => {
+    const h = () => { state.f[el.dataset.f] = el.value; render(); if (el.dataset.f === "q") { const n = document.querySelector("[data-f=q]"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+    if (el.dataset.f === "q") el.oninput = h; else el.onchange = h;
+  });
+  const rs = $("reset"); if (rs) rs.onclick = () => { state.f = { ...F0 }; render(); };
+}
+const hasFilter = () => Object.entries(state.f).some(([k, v]) => v && !(k === "result" && state.tab === "plan"));
+
+/* ---- 회수 예정 탭 ---- */
+const dState = r => r.acted ? chip("ok", "조치함 · 재평가 대기") : (n => chip(n <= 7 ? "hot" : "done", "D-" + n) + ` <span class="mu">${md(r.due)}</span>`)(dday(r.due));
+const envChips = r => [...new Set(r.dep.filter(x => x.on).map(x => x.env))].map(e => e === "prod" && r.reason === "unused" ? `<span class="en w">prod 배포 중</span>` : `<span class="en">${e}</span>`).join("");
+const empty = (t, d, reset) => `<div class="empty"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#898781" stroke-width="2" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="M15 25l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${t}</b>${d}${reset ? `<div style="margin-top:12px"><button class="lk" id="reset">필터 초기화</button></div>` : ""}</div>`;
+function renderPlan() {
+  const all = state.empty ? [] : ROWS.filter(r => r.status === "plan");
+  $("t-plan").textContent = "회수 예정 " + all.length;
+  if (!all.length) return empty("회수 예정인 리소스가 없습니다", "현재 조치할 리소스가 없습니다. 새로 선정되면 알림으로 안내드립니다.");
+  const near = k => Math.min(...all.filter(x => x.reason === k).map(x => dday(x.due))), cnt = k => all.filter(x => x.reason === k).length;
+  let h = `<div class="tiles">` + ["unused", "over", "low"].map(k => `<div class="tile"><small>${R[k].label}</small><b>${cnt(k)}건</b><span>최단 D-${near(k)}</span></div>`).join("") +
+    `<div class="tile"><small>조치함 · 재평가 대기</small><b>${all.filter(x => x.acted).length}건</b><span>다음 재평가 ${NEXT_REEVAL}</span></div></div>` + bar(false);
+  const list = all.filter(pass);
+  if (!list.length) return h + empty("조건에 맞는 리소스가 없습니다", "필터를 변경해 주시기 바랍니다.", true);
+  [...new Set(list.map(r => r.acct))].forEach(a => {
+    const ar = list.filter(r => r.acct === a), open = state.open.has(a) || hasFilter();
+    h += `<button class="ah" data-acct="${a}" aria-expanded="${!!open}"><span>${open ? "▾" : "▸"}</span>${a}<em>${ar.length}건 · 최단 D-${Math.min(...ar.map(r => dday(r.due)))}</em></button>`;
+    if (!open) return;
+    [...new Set(ar.map(r => r.proj))].forEach(p => {
+      const pr = ar.filter(r => r.proj === p);
+      h += `<div class="ph">프로젝트 ${p} · ${pr.length}건</div>` + pr.map(r => `<div class="rw${r.acted ? " acted" : ""}">
+        <span><button class="rn" data-id="${r.id}">${r.name}</button><br><span class="mu">${r.svc} · ${r.plat}</span> ${envChips(r)}</span>
+        <span>${chip(R[r.reason].cls, R[r.reason].label)}</span><span class="mu">${r.ev}</span><span>${dState(r)}</span>
+        <span class="act">${r.acted ? `<button class="lk gh" data-id="${r.id}">상세</button>` : `<a class="lk" href="#" onclick="return false">${primary(r)} ↗</a>`}</span></div>`).join("");
+    });
+  });
+  return h;
+}
+/* ---- 처리 이력 탭 ---- */
+function renderHist() {
+  const all = state.empty ? [] : ROWS.filter(r => r.status !== "plan");
+  if (!all.length) return empty("처리된 이력이 없습니다", "회수가 완료되거나 취소, 철회된 리소스가 여기에 표시됩니다.");
+  const list = all.filter(pass).sort((a, b) => b.at.localeCompare(a.at));
+  let h = bar(true) + `<div class="mu" style="margin-bottom:8px">최근 [N]일 · 보관 기간은 정책에 따릅니다</div>`;
+  if (!list.length) return h + empty("조건에 맞는 이력이 없습니다", "필터를 변경해 주시기 바랍니다.", true);
+  return h + `<div class="hrow hh"><span>처리 일시</span><span>리소스</span><span>사유 → 조치</span><span>결과</span><span>처리 방식</span></div>` +
+    list.map(r => `<div class="hrow"><span class="mu">${md(r.at)} ${r.at.slice(11)}</span>
+      <span><button class="rn" data-id="${r.id}">${r.name}</button><br><span class="mu">${r.acct} › ${r.proj} · ${r.svc} · ${r.plat}</span></span>
+      <span>${chip(R[r.reason].cls, R[r.reason].label)}</span><span>${chip(ST[r.status].cls, r.status === "done" ? R[r.reason].done + " 완료" : ST[r.status].label)}</span><span class="mu">${r.how}</span></div>`).join("");
+}
+
+/* ---- 상세 패널 ---- */
+function series(seed, avg, max) {
+  let s = seed * 7919 % 233280; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const av = [], mx = [], amp = Math.max(1.5, (max - avg) / 5);
+  for (let i = 0; i < 30; i++) { const a = Math.max(0, avg + amp * Math.sin(i / 2.3) + (rnd() - .5) * amp); av.push(a); mx.push(Math.min(100, a + (max - avg) * (0.4 + rnd() * .6))); }
+  return { av, mx };
+}
+const pts = a => a.map((v, i) => `${(i * 13.6).toFixed(0)},${(120 - Math.min(100, v) * 1.2).toFixed(0)}`).join(" ");
+function chartHtml(r, metric) {
+  if (r.reason === "unused") return `<div class="mu" style="padding:16px 0">${r.ev} · 이 기간 사용 기록이 없습니다.</div>`;
+  const key = metric === "CPU" ? "cpu" : "mem", q = r.q[key], avg = q.use, max = r.m[key][1], low = r.reason === "low", thr = q.thr;
+  const d = series(r.id + (key === "cpu" ? 0 : 5), avg, max), below = k => r.q[k].use < r.q[k].thr;
+  const tabs = ["CPU", "메모리"].map(m => { const k = m === "CPU" ? "cpu" : "mem"; return `<button class="c" data-m="${m}" style="border:0;cursor:pointer;${m === metric ? "background:#2F5BEA;color:#fff" : "background:#EEF0F4;color:#3A4150"}">${m}${low && below(k) ? " · 기준 미달" : ""}</button>`; }).join("");
+  const ty = 120 - thr * 1.2;
+  return `<div style="display:flex;gap:6px;margin-bottom:8px">${tabs}</div>
+    <div class="mu" style="margin-bottom:4px">평균 ${avg}% · 최대 ${max}%${low ? ` · 저조 기준 ${thr}% ${avg < thr ? "미만" : "이상"}` : ""}</div>
+    <svg width="100%" viewBox="0 0 440 124" role="img" aria-label="최근 30일 ${metric} 사용률${low ? `, 저조 기준 ${thr}%` : ""}"><line x1="0" y1="119" x2="406" y2="119" stroke="#E1E0D9"/><line x1="0" y1="60" x2="406" y2="60" stroke="#E1E0D9"/><line x1="0" y1="1" x2="406" y2="1" stroke="#E1E0D9"/>
+    ${low ? `<line x1="0" y1="${ty}" x2="406" y2="${ty}" stroke="#898781" stroke-width="1.5" stroke-dasharray="6 4"/><text x="410" y="${ty + 4}" font-size="11" fill="#5B6472">기준 ${thr}%</text>` : ""}
+    <polyline points="${pts(d.mx)}" fill="none" stroke="#7fb1ea" stroke-width="1.2"/><polyline points="${pts(d.av)}" fill="none" stroke="#2a78d6" stroke-width="2.5"/>
+    <text x="410" y="123" font-size="11" fill="#898781">0%</text><text x="410" y="64" font-size="11" fill="#898781">50%</text><text x="410" y="12" font-size="11" fill="#898781">100%</text></svg>
+    ${r.reason === "over" ? `<div class="mu">100%를 넘는 값은 100%로 표시됩니다.</div>` : ""}`;
+}
+function quotaHtml(r) {
+  const low = r.reason === "low";
+  const rows = [["CPU", "cpu"], ["메모리", "mem"]].map(([t, k]) => { const q = r.q[k], below = low && q.use < q.thr;
+    return `<tr><td>${t}</td><td>${q.cur} ${q.u}</td><td>${q.req == null ? "-" : q.req + " " + q.u}</td><td>${q.min} ${q.u}${low && q.cur <= q.min ? ` <span class="en f">최소 도달</span>` : ""}</td><td${below ? ' style="color:var(--hot);font-weight:700"' : ""}>${q.use}%${below ? " · 미달" : ""}</td><td>${q.thr}%</td></tr>`; }).join("");
+  return `<table class="tbl"><tr><th>항목</th><th>현재 할당량</th><th>필요 할당량</th><th>최소 할당량</th><th>사용률</th><th>저조 기준</th></tr>${rows}</table>` +
+    (low ? `<div class="mu" style="margin-top:6px">필요 할당량은 사용률을 저조 기준 이상으로 올리는 데 필요한 최소 할당량입니다.</div>` : "");
+}
+function autoHtml(r) {
+  const e = r.elig || { ok: false, code: "" };
+  if (e.ok) {
+    const pv = [["CPU", "cpu"], ["메모리", "mem"]].map(([t, k]) => { const q = r.q[k]; return q.req < q.cur ? `${t} ${q.cur} → ${q.req} ${q.u}` : `${t} 변경 없음`; }).join(" / ");
+    return `<a class="btn" href="#" onclick="return false"><span>자원량 자동조정</span><span>↗</span></a><div class="mu">예상 조정 결과 · ${pv}</div>`;
+  }
+  return `<button class="btn" disabled><span>자원량 자동조정</span><span style="font-weight:400;font-size:12px">사용 불가</span></button><div class="mu">${CODE_MSG[e.code] || "현재 자동조정을 사용할 수 없습니다."}</div>`;
+}
+function eventsOf(r) {
+  const due = new Date(r.due0), dd = x => { const t = new Date(due); t.setDate(t.getDate() - x); return `${String(t.getMonth() + 1).padStart(2, "0")}/${String(t.getDate()).padStart(2, "0")}`; };
+  const past = [{ k: "sel", d: dd(17), t: "회수 대상 선정", who: "시스템", r: r.ev }, { k: "al", d: dd(10), t: "알림 발송 1회차", who: "시스템", r: "담당자에게 발송" }];
+  if (r.long) past.push({ k: "ev", d: dd(8), t: "재평가 · 유지", who: "시스템", r: "기준 미달 지속" }, { k: "al", d: dd(7), t: "알림 발송 2회차", who: "시스템", r: "담당자에게 발송" }, { k: "ev", d: dd(5), t: "재평가 · 유지", who: "시스템", r: "기준 미달 지속" }, { k: "al", d: dd(3), t: "알림 발송 3회차", who: "시스템", r: "담당자에게 발송" }, { k: "ev", d: dd(2), t: "재평가 · 유지", who: "시스템", r: "기준 미달 지속" });
+  else if (r.acted) past.push({ k: "ev", d: dd(4), t: "재평가 · 유지", who: "시스템", r: "기준 미달 지속" });
+  else past.push({ k: "al", d: dd(5), t: "알림 발송 2회차", who: "시스템", r: "담당자에게 발송" });
+  past.push(...r.adm);
+  past.reverse();
+  if (r.status === "plan") return [{ k: "up", d: md(r.due), t: R[r.reason].act + " 예정", who: "", r: "" }, { k: "up", d: NEXT_REEVAL, t: "다음 재평가", who: "시스템", r: r.acted ? "조치 내용 확인" : "" }, ...past];
+  const end = { done: { t: "회수 완료", who: r.byAdmin ? "관리자" : "시스템", r: r.byAdmin ? "즉시 회수 (리소스 중지)" : R[r.reason].act + " 실행" }, cancel: { t: "취소", who: "관리자", r: "요청 접수 후 취소" }, withdraw: { t: "철회", who: "시스템", r: "사유 해소로 회수 대상에서 해제" } }[r.status];
+  return [{ k: "end", d: md(r.at) + " " + r.at.slice(11), ...end }, ...past];
+}
+function openDrawer(id, metric, expand) {
+  const r = ROWS.find(x => x.id === id), k = R[r.reason], plan = r.status === "plan";
+  metric = metric || (r.reason === "low" && r.q.cpu.use >= r.q.cpu.thr && r.q.mem.use < r.q.mem.thr ? "메모리" : "CPU");
+  const n = dday(r.due), evs = eventsOf(r), shown = expand ? evs : evs.slice(0, 5);
+  const top = plan ? `<span style="font-size:26px;font-weight:700;color:${n <= 7 ? "var(--hot)" : "var(--ink)"}">D-${n}</span>
+      <span>${md(r.due)} ${k.act} 예정<br><span class="mu">다음 재평가 ${NEXT_REEVAL}${r.acted ? " · 이 재평가에서 해제될 수 있습니다" : ""}</span></span>`
+    : `${chip(ST[r.status].cls, r.status === "done" ? k.done + " 완료" : ST[r.status].label)}<span>${md(r.at)} ${r.at.slice(11)}<br><span class="mu">${r.how}</span></span>`;
+  const links = { unused: [["재배포", 1], ["삭제", 0]], over: [["한도 조절", 1], ["자원 협의 신청", 0]], low: [["한도 조절", 1]] }[r.reason];
+  $("db").innerHTML = `
+    <div style="font-size:18px;font-weight:700">${r.name}</div><div class="mu" style="margin:2px 0 8px">${r.acct} › ${r.proj}</div>
+    ${chip(k.cls, k.label)} ${r.acted ? chip("ok", "조치함 · 재평가 대기") : ""} <span class="en">${r.svc}</span><span class="en">${r.plat}</span>
+    <div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border-radius:8px;display:flex;align-items:center;gap:14px">${top}</div>
+    <div class="sec">배포 상태</div>
+    <table class="tbl"><tr><th>config</th><th>env</th><th>배포</th><th>CPU</th><th>메모리</th></tr>${r.dep.map(x => `<tr class="${x.on ? "" : "off"}"><td>${x.config}</td><td>${x.env}</td><td>${x.on ? "● 배포됨" : "○ 미배포"}</td><td>${x.cpu}</td><td>${x.mem}</td></tr>`).join("")}</table>
+    <div class="sec">할당량</div>${quotaHtml(r)}
+    <div class="sec">사용률 근거 <span class="mu" style="font-weight:400">· 최근 30일</span></div>${chartHtml(r, metric)}
+    <div class="sec">진행 이력 <span class="mu" style="font-weight:400">· ${evs.length}건</span></div>
+    ${shown.map(e => `<div class="tl ${e.k === "up" ? "up" : e.k === "end" ? "end" : ""}"><span class="dt"${e.k === "end" ? ` style="background:${ST[r.status].c}"` : ""}></span><span${e.k === "end" ? ' style="font-weight:700"' : ""}>${e.d} ${e.t}</span><br><small>${[e.who, e.r].filter(Boolean).join(" · ")}</small></div>`).join("")}
+    ${evs.length > 5 ? `<button class="lk gh" id="more">${expand ? "접기" : `전체 이력 ${evs.length}건 보기`}</button>` : ""}
+    ${plan ? `<div class="sec">조치</div>
+    ${links.map(([t, p]) => `<a class="btn${p ? " p" : ""}" href="#" onclick="return false"><span>${t}</span><span>↗</span></a>`).join("")}
+    ${r.reason === "low" ? autoHtml(r) : ""}
+    <div class="mu" style="margin-top:8px">조치하면 다음 재평가에서 확인됩니다. 예외가 필요한 경우 관리자에게 문의 부탁드립니다.</div>` : `<div class="mu" style="margin-top:16px">처리가 완료된 건으로 조치할 수 없습니다.</div>`}
+    ${plan && state.admin ? `<div class="sec">관리자 전용 <span class="mu" style="font-weight:400">· 일반 사용자에게는 표시되지 않습니다</span></div>
+    <div class="adm"><button class="ab" id="a-date">회수 예정일 수정</button><button class="ab" id="a-step">단계별 감축 즉시 실행</button><button class="ab d" id="a-now">즉시 회수 (리소스 중지)</button></div>` : ""}`;
+  document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => openDrawer(id, b.dataset.m, expand));
+  const mb = $("more"); if (mb) mb.onclick = () => openDrawer(id, metric, !expand);
+  if ($("a-date")) { $("a-date").onclick = () => dateModal(r); $("a-step").onclick = () => stepModal(r); $("a-now").onclick = () => nowModal(r); }
+  $("ov").classList.add("open");
+}
+/* ---- 관리자 모달 ---- */
+const esc = t => t.replace(/[<>&]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]);
+const showModal = h => { $("mb").innerHTML = h; $("md").classList.add("open"); };
+const hideModal = () => $("md").classList.remove("open");
+$("md").onclick = e => { if (e.target === $("md")) hideModal(); };
+const done = r => { hideModal(); render(); openDrawer(r.id); };
+function dateModal(r) {
+  const cur = r.due, MIN = "2026-10-19";
+  showModal(`<h2 style="margin:0 0 12px;font-size:17px">회수 예정일 수정</h2>
+    <div class="mu" style="margin-bottom:12px">${r.name} · 현재 예정일 ${md(cur)} (D-${dday(cur)})<br>다음 재평가 ${NEXT_REEVAL} 이후의 날짜만 선택할 수 있습니다.</div>
+    <label for="nd" class="mu">새 예정일</label><br><input id="nd" class="fi" type="date" min="${MIN}" value="${cur}" style="margin:4px 0 8px"><div id="np" class="mu" style="margin-bottom:12px"></div>
+    <label for="nr" class="mu">변경 사유</label><textarea id="nr" class="fi" rows="3" style="width:100%;height:auto;padding:8px;margin-top:4px" placeholder="변경 사유를 입력해 주시기 바랍니다"></textarea>
+    <div class="mbtn"><button class="lk gh" id="mc">취소</button><button class="lk" id="ms" disabled>저장</button></div>`);
+  const upd = () => { const v = $("nd").value; $("np").textContent = v ? `D-${dday(cur)} → D-${dday(v)} (${md(v)})` : ""; $("ms").disabled = !(v && v !== cur && v >= MIN && $("nr").value.trim()); };
+  $("nd").oninput = upd; $("nr").oninput = upd; upd();
+  $("mc").onclick = hideModal;
+  $("ms").onclick = () => { const v = $("nd").value; r.adm.push({ k: "adm", d: "10/15", t: "회수 예정일 변경", who: "관리자", r: `${md(cur)} → ${md(v)} · ${esc($("nr").value.trim())}` }); r.due = v; done(r); };
+}
+function stepModal(r) {
+  showModal(`<h2 style="margin:0 0 12px;font-size:17px">단계별 감축 즉시 실행</h2>
+    <p style="margin:0 0 4px">${r.name}의 단계별 감축 중 다음 단계를 즉시 실행합니다.</p><p class="mu" style="margin:0">실행 내용은 진행 이력에 기록됩니다.</p>
+    <div class="mbtn"><button class="lk gh" id="mc">취소</button><button class="lk" id="ms">실행</button></div>`);
+  $("mc").onclick = hideModal;
+  $("ms").onclick = () => { r.adm.push({ k: "adm", d: "10/15", t: "단계별 감축 즉시 실행", who: "관리자", r: "다음 단계 실행" }); done(r); };
+}
+function nowModal(r) {
+  const prod = r.dep.some(x => x.env === "prod" && x.on);
+  showModal(`<h2 style="margin:0 0 12px;font-size:17px;color:var(--hot)">즉시 회수 (리소스 중지)</h2>
+    ${prod ? `<div class="wn">prod 환경에 배포 중입니다. 실행하면 운영 중인 서비스가 중단됩니다.</div>` : ""}
+    <p style="margin:0 0 12px">${r.name}을(를) 즉시 중지하고 회수합니다.</p>
+    <label for="nn" class="mu">계속하려면 리소스명 <b>${r.name}</b>을(를) 입력해 주시기 바랍니다.</label><input id="nn" class="fi" style="width:100%;margin-top:4px" autocomplete="off">
+    <div class="mbtn"><button class="lk gh" id="mc">취소</button><button class="lk" id="ms" disabled style="color:#fff;background:var(--hot);border-color:var(--hot)">즉시 회수</button></div>`);
+  $("nn").oninput = () => { $("ms").disabled = $("nn").value !== r.name; };
+  $("mc").onclick = hideModal;
+  $("ms").onclick = () => { r.status = "done"; r.at = "2026-10-15 10:30"; r.how = "관리자 즉시 회수"; r.byAdmin = true; done(r); };
+}
+const closeDrawer = () => $("ov").classList.remove("open");
+$("dx").onclick = closeDrawer;
+$("ov").onclick = e => { if (e.target === $("ov")) closeDrawer(); };
+document.addEventListener("keydown", e => { if (e.key !== "Escape") return; if ($("md").classList.contains("open")) hideModal(); else closeDrawer(); });
+
+/* ---- 렌더링 ---- */
+function render() {
+  const plan = state.tab === "plan";
+  $("main").innerHTML = plan ? renderPlan() : renderHist();
+  $("t-plan").setAttribute("aria-selected", plan); $("t-hist").setAttribute("aria-selected", !plan);
+  if (!plan) $("t-plan").textContent = "회수 예정 " + (state.empty ? 0 : ROWS.filter(r => r.status === "plan").length);
+  $("o-n").className = state.empty ? "" : "on"; $("o-e").className = state.empty ? "on" : ""; $("o-u").className = state.admin ? "" : "on"; $("o-a").className = state.admin ? "on" : "";
+  document.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => { const a = b.dataset.acct; state.open.has(a) ? state.open.delete(a) : state.open.add(a); render(); });
+  document.querySelectorAll("[data-id]").forEach(b => b.onclick = () => openDrawer(Number(b.dataset.id)));
+  bindBar();
+}
+document.querySelector(".tabs").onclick = e => { if (e.target.dataset.tab) { state.tab = e.target.dataset.tab; render(); } };
+$("o-n").onclick = () => { state.empty = false; render(); };
+$("o-e").onclick = () => { state.empty = true; render(); };
+$("o-u").onclick = () => { state.admin = false; closeDrawer(); render(); };
+$("o-a").onclick = () => { state.admin = true; closeDrawer(); render(); };
+render();
+</script>
+</body>
+</html>
