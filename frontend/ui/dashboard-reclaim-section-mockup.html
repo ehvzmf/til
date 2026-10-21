@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대시보드 자원회수 섹션 목업</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--ink:#1F2430;--mu:#5B6472;--line:#DDE1E8;--soft:#EEF0F4;--bg:#F4F5F8;--accent:#2F5BEA;--hot:#A12626;--hotbg:#FADADA}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--bg);font:14px/1.5 "Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.opt{background:#fff;border-bottom:1px solid var(--line);padding:8px 40px;font-size:12px;color:var(--mu);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.opt button{border:1px solid #CBD1DB;background:#fff;border-radius:4px;padding:2px 10px;font:inherit;cursor:pointer}
+.opt button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pg{max-width:1240px;margin:0 auto;padding:32px 40px;display:flex;flex-direction:column;gap:24px}
+.ph{border:1px dashed #AEB5C2;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:13px;background:#FAFBFC}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 24px 24px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sh h2{margin:0;font-size:18px}
+.sh span{font-size:13px;color:var(--mu)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.tile small{display:block;font-size:13px;color:var(--mu)}
+.tile b{font-size:24px;font-weight:500}
+.tile span{font-size:12px;color:var(--mu);margin-left:6px}
+.tile.all{border-color:var(--accent);background:#F3F6FF}
+.tile.all a{display:inline-block;margin-top:2px;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none}
+.tile.all a:hover{text-decoration:underline}
+.warn{display:flex;align-items:center;gap:10px;margin-top:12px;background:#FDF1F1;border-radius:6px;padding:0 14px;min-height:40px;font-size:13px;color:var(--hot)}
+.warn a{margin-left:auto;font-weight:700;color:var(--hot);white-space:nowrap}
+.lh{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 4px;font-size:14px;font-weight:700}
+.lh span{font-size:12px;font-weight:400;color:var(--mu)}
+.rw{display:grid;grid-template-columns:1.7fr 1.3fr 1fr 72px;align-items:center;gap:12px;min-height:48px;padding:4px;border-bottom:1px solid var(--soft);color:inherit;text-decoration:none}
+.rw:last-child{border-bottom:0}
+a.rw:hover{background:#F7F8FA}
+.rw b{font-weight:700}
+.mu{color:var(--mu);font-size:13px}
+.c{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.un{background:#EEF0F4;color:#3A4150}.ov{background:#FFEFD9;color:#8A4300}.lo{background:#DDF3EE;color:#0B5E4F}
+.hot{background:var(--hotbg);color:var(--hot)}.nm{background:#EEF0F4;color:#3A4150}
+.en{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border:1px solid var(--hot);border-radius:4px;color:var(--hot);margin-left:6px}
+.go{justify-self:end;font-size:13px;font-weight:700;color:var(--accent)}
+.empty{text-align:center;padding:48px 20px;color:var(--mu)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin:12px 0 4px}
+.sk{background:linear-gradient(90deg,#EEF0F4,#F7F8FA,#EEF0F4);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:6px}
+@keyframes sk{to{background-position:-200% 0}}
+.btn{border:1px solid var(--accent);color:var(--accent);background:#fff;border-radius:6px;padding:6px 12px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rw{grid-template-columns:1fr 72px}.rw>:nth-child(2),.rw>:nth-child(3){grid-column:1}.two{grid-template-columns:1fr}.pg{padding:20px}}
+</style>
+</head>
+<body>
+<div class="opt">목업 옵션
+  <button data-s="def" class="on">기본</button><button data-s="nowarn">주의 없음</button><button data-s="empty">빈 상태</button><button data-s="load">로딩</button><button data-s="err">오류</button>
+  <span>· 점선 박스는 대시보드의 다른 행 자리입니다 · 이름과 수치는 모두 샘플입니다</span>
+</div>
+<main class="pg">
+  <div class="ph" style="height:200px">① 계정 전체 자원 현황 (높이 약 200)</div>
+  <section class="sec" aria-labelledby="h">
+    <div class="sh"><h2 id="h">자원회수</h2><span>회수 예정인 리소스를 확인하시고 조치 부탁드립니다.</span></div>
+    <div id="body"></div>
+  </section>
+  <div class="two"><div class="ph" style="height:275px">③ 전체 프로젝트 목록</div><div class="ph" style="height:275px">③ 전체 알림 목록</div></div>
+</main>
+
+<script>
+/* ---- 샘플 데이터: 실제로는 회수 화면과 같은 요약, 목록 API (예정일 오름차순) ---- */
+const SUMMARY = { unused: { n: 5, near: 3 }, over: { n: 3, near: 5 }, low: { n: 4, near: 9 }, prodUnused: 2 };
+const TODAY = new Date(2026, 9, 15);
+const TOP = [
+  { name: "batch-worker-01", path: "계정 A › web-front", reason: "unused", due: "2026-10-18", prod: true },
+  { name: "api-gateway-02", path: "계정 A › web-front", reason: "over", due: "2026-10-20" },
+  { name: "ledger-job-02", path: "계정 B › payments", reason: "over", due: "2026-10-20" },
+  { name: "etl-runner-07", path: "계정 A › data-batch", reason: "unused", due: "2026-10-21" },
+  { name: "ledger-cache-01", path: "계정 B › payments", reason: "unused", due: "2026-10-25" },
+];
+const R = { unused: ["un", "미사용 → 삭제"], over: ["ov", "한도 초과 → 회수"], low: ["lo", "사용률 저조 → 최적화"] };
+const $ = id => document.getElementById(id);
+const dday = s => Math.round((new Date(s) - TODAY) / 864e5);
+const md = s => s.slice(5).replace("-", "/");
+const total = () => SUMMARY.unused.n + SUMMARY.over.n + SUMMARY.low.n;
+
+function tiles() {
+  const t = (k, label) => `<div class="tile"><small>${label}</small><b>${SUMMARY[k].n}건</b><span>최단 D-${SUMMARY[k].near}</span></div>`;
+  return `<div class="tiles">${t("unused", "미사용 → 삭제")}${t("over", "한도 초과 → 회수")}${t("low", "사용률 저조 → 최적화")}
+    <div class="tile all"><small>회수 예정 리소스 전체</small><b>${total()}건</b><br><a href="#" onclick="return false">전체 보기 ↗</a></div></div>`;
+}
+function rows(n) {
+  return `<div class="lh">가장 임박한 리소스<span>예정일 순 · 상위 ${n}건</span></div><div>` + TOP.slice(0, n).map(r => {
+    const d = dday(r.due);
+    return `<a class="rw" href="#" onclick="return false"><span><b>${r.name}</b>${r.prod && r.reason === "unused" ? '<span class="en">prod 배포 중</span>' : ""}<br><span class="mu">${r.path}</span></span>
+      <span><span class="c ${R[r.reason][0]}">${R[r.reason][1]}</span></span><span><span class="c ${d <= 7 ? "hot" : "nm"}">D-${d}</span> <span class="mu">${md(r.due)}</span></span><span class="go">상세 ↗</span></a>`;
+  }).join("") + "</div>";
+}
+const VIEW = {
+  def: () => tiles() + `<div class="warn"><span>삭제 예정 중 prod 환경에 배포 중인 리소스가 ${SUMMARY.prodUnused}건 있습니다.</span><a href="#" onclick="return false">확인 ↗</a></div>` + rows(4),
+  nowarn: () => tiles() + rows(5),
+  empty: () => `<div class="empty"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#898781" stroke-width="2" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="M15 25l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><b>회수 예정인 리소스가 없습니다</b>현재 조치할 리소스가 없습니다. 새로 선정되면 알림으로 안내드립니다.</div>`,
+  load: () => `<div class="tiles">${'<div class="sk" style="height:82px"></div>'.repeat(4)}</div><div class="sk" style="height:40px;margin-top:12px"></div><div class="sk" style="height:20px;width:160px;margin:20px 0 12px"></div>${'<div class="sk" style="height:44px;margin-bottom:8px"></div>'.repeat(4)}`,
+  err: () => `<div class="empty"><b>회수 예정 리소스를 불러오지 못했습니다</b>잠시 후 다시 시도해 주시기 바랍니다.<div style="margin-top:12px"><button class="btn" data-s="def">다시 시도</button></div></div>`,
+};
+function show(s) {
+  $("body").innerHTML = VIEW[s]();
+  document.querySelectorAll(".opt button").forEach(b => b.className = b.dataset.s === s ? "on" : "");
+  $("body").querySelectorAll("[data-s]").forEach(b => b.onclick = () => show(b.dataset.s));
+}
+document.querySelectorAll(".opt button").forEach(b => b.onclick = () => show(b.dataset.s));
+show("def");
+</script>
+</body>
+</html>
