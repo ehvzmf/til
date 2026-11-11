@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자원회수 대시보드 목업</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F6F6FA;color:#1F2330;font-family:'Noto Sans KR','Pretendard','Malgun Gothic',sans-serif}
+.wrap{max-width:1440px;margin:0 auto;padding:28px 32px;display:flex;flex-direction:column;gap:16px}
+h1{margin:0;font-size:20px}
+.cards{display:grid;grid-template-columns:1.25fr 1.5fr 1fr 1.2fr;gap:12px;height:150px}
+.card{background:#fff;border:1px solid #E3E4EC;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between}
+.lbl{font-size:12px;font-weight:500;color:#5B6172}
+.badge{font-size:12px;font-weight:700;color:#4A40C0;background:#EEEDFB;padding:2px 8px;border-radius:999px}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.f{background:none;border:1px solid transparent;border-radius:8px;padding:2px 6px;margin:0 -6px;cursor:pointer;font:inherit;color:inherit;text-align:left}
+.f:hover{background:#F3F2FC}
+.f.on{border-color:#5C51D6;background:#EEEDFB}
+.leg{font-size:12px;display:flex;gap:6px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%}
+.envs{display:flex;gap:14px}
+.envs small{display:block;font-size:11px;color:#5B6172}
+.envs b{font-size:22px}
+.envs .prd small{color:#4A40C0;font-weight:700}.envs .prd b{color:#4A40C0}
+.note{font-size:11px;color:#5B6172}
+.assure{background:#EEEDFB;border-color:#D9D6F7}
+.assure h2{margin:0;font-size:14px;color:#2E2780}
+.assure p{margin:0;font-size:12px;color:#454A60;line-height:1.5}
+.chips{display:flex;gap:8px}
+.chips a{font-size:12px;font-weight:500;background:#fff;border:1px solid #5C51D6;padding:5px 12px;border-radius:999px;text-decoration:none;color:#4A40C0}
+.chips a:hover{background:#F3F2FC}
+.panel{background:#fff;border:1px solid #E3E4EC;border-radius:12px;overflow:hidden}
+.tabs{display:flex;gap:20px;padding:0 18px;border-bottom:1px solid #E3E4EC;align-items:center}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:14px 0;font:inherit;font-size:14px;color:#5B6172;cursor:pointer}
+.tab.act{border-color:#5C51D6;font-weight:700;color:#4A40C0}
+.clear{margin-left:auto;font-size:12px;background:none;border:0;color:#4A40C0;cursor:pointer;display:none}
+table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
+th{padding:10px 18px;font-weight:500;color:#5B6172;background:#FAFAFD}
+td{padding:12px 18px;border-top:1px solid #EEEFF4}
+td:first-child{font-weight:500}
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr;height:auto}.card{min-height:150px}.panel{overflow-x:auto}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>자원회수</h1>
+<section class="cards">
+<div class="card">
+<div class="lbl">다음 회수 예정</div>
+<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:26px;font-weight:700">11.13 (금) 14:00</span><span class="badge">D-2</span></div>
+<div style="font-size:14px">회수 예정 리소스 <b style="font-size:18px">500</b>건</div>
+</div>
+<div class="card">
+<div class="lbl">회수 사유별</div>
+<div class="bar"><div style="flex:180;background:#5C51D6"></div><div style="flex:120;background:#9A93E8"></div><div style="flex:200;background:#CFCBF4"></div></div>
+<div class="legend">
+<button class="f" data-k="reason" data-v="사용률 저조" title="회수 시 리소스 수정(최적화)"><span class="leg"><span class="dot" style="background:#5C51D6"></span>사용률 저조 <b>180</b></span></button>
+<button class="f" data-k="reason" data-v="사용한도 초과" title="회수 시 리소스 중지"><span class="leg"><span class="dot" style="background:#9A93E8"></span>사용한도 초과 <b>120</b></span></button>
+<button class="f" data-k="reason" data-v="장기 미사용" title="회수 시 리소스 삭제"><span class="leg"><span class="dot" style="background:#CFCBF4"></span>장기 미사용 <b>200</b></span></button>
+</div>
+</div>
+<div class="card">
+<div class="lbl">환경별</div>
+<div class="envs">
+<button class="f" data-k="env" data-v="dev"><small>dev</small><b>110</b></button>
+<button class="f" data-k="env" data-v="stg"><small>stg</small><b>140</b></button>
+<button class="f prd" data-k="env" data-v="prd"><small>prd</small><b>250</b></button>
+</div>
+<div class="note">환경에 따라 회수 시각이 다를 수 있습니다</div>
+</div>
+<div class="card assure">
+<h2>회수 후에도 되돌릴 수 있습니다</h2>
+<p>계정 가용량 이내에서 아래 방법으로 복구하실 수 있습니다.</p>
+<div class="chips"><a href="#">자원량 변경</a><a href="#">리소스 재배포</a></div>
+</div>
+</section>
+<section class="panel">
+<div class="tabs">
+<button class="tab act">회수 예정 <span id="cnt">500</span></button>
+<button class="tab">처리 이력</button>
+<button class="clear" id="clear">필터 해제</button>
+</div>
+<table>
+<thead><tr><th>리소스명</th><th>계정</th><th>프로젝트</th><th>회수 사유</th><th>env</th><th>회수 예정일시</th></tr></thead>
+<tbody id="rows">
+<tr data-reason="사용률 저조" data-env="prd"><td>batch-worker-01</td><td>acct-alpha</td><td>proj-a</td><td>사용률 저조</td><td>prd</td><td>11.13 14:00</td></tr>
+<tr data-reason="사용한도 초과" data-env="stg"><td>report-api</td><td>acct-alpha</td><td>proj-b</td><td>사용한도 초과</td><td>stg</td><td>11.13 14:00</td></tr>
+<tr data-reason="장기 미사용" data-env="dev"><td>etl-scheduler</td><td>acct-beta</td><td>proj-c</td><td>장기 미사용</td><td>dev</td><td>11.13 14:00</td></tr>
+<tr data-reason="사용률 저조" data-env="prd"><td>web-portal</td><td>acct-beta</td><td>proj-c</td><td>사용률 저조</td><td>prd</td><td>11.13 14:00</td></tr>
+<tr data-reason="장기 미사용" data-env="dev"><td>ml-trainer</td><td>acct-gamma</td><td>proj-d</td><td>장기 미사용</td><td>dev</td><td>11.13 14:00</td></tr>
+</tbody>
+</table>
+</section>
+</main>
+<script>
+(function(){
+var sel={reason:null,env:null},btns=document.querySelectorAll('.f'),rows=document.querySelectorAll('#rows tr'),clr=document.getElementById('clear'),cnt=document.getElementById('cnt');
+function apply(){
+var n=0;
+rows.forEach(function(r){var ok=(!sel.reason||r.dataset.reason===sel.reason)&&(!sel.env||r.dataset.env===sel.env);r.style.display=ok?'':'none';if(ok)n++;});
+btns.forEach(function(b){b.classList.toggle('on',sel[b.dataset.k]===b.dataset.v);});
+clr.style.display=(sel.reason||sel.env)?'block':'none';
+cnt.textContent=(sel.reason||sel.env)?n+' (필터 적용)':'500';
+}
+btns.forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.k;sel[k]=sel[k]===b.dataset.v?null:b.dataset.v;apply();});});
+clr.addEventListener('click',function(){sel.reason=null;sel.env=null;apply();});
+})();
+</script>
+</body>
+</html>
